@@ -6,3 +6,8 @@ class Rol:
         self.nombre_rol = nombre_rol
         self.permisos = permisos
         self.id_usuario = id_usuario
+
+#crear
+#modificar
+#mostrar
+#eliminar
