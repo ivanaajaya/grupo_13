@@ -11,17 +11,17 @@ class DatabaseConnection:
         if cls._connection is None:
             cls._connection = mysql.connector.connect(
             host='127.0.0.1',
-            user='root',
+            user='ivana',
             port = "3306",
             password='root1234+',
-            database='production'
+            database='proyecto'
         )
         return cls._connection
 
 
 #EJEMPLO DE MÉTODO DE CLASES
 
-"""    @classmethod
+    @classmethod
     def execute_query(cls, query, params=None):
         cursor = cls.get_connection().cursor()
         cursor.execute(query, params)
@@ -44,4 +44,4 @@ class DatabaseConnection:
     def close_connection(cls):
         if cls._connection is not None:
             cls._connection.close()
-            cls._connection = None """
+            cls._connection = None
