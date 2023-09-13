@@ -32,7 +32,10 @@ class Usuario:
     
     def serialize(self):
         """Convierte la instancia de la clase en un diccionario.
-        Al serializar un objeto Python a JSON, se convierte en una cadena JSON que luego se puede enviar a través de una solicitud HTTP"""
+        Al serializar un objeto Python a JSON, se convierte en una cadena JSON 
+        que luego se puede enviar a través de una solicitud HTTP"""
+        
+        # para obtener y serializar información relacionada con el estado y el rol del usuario
         
         return {
             "id_usuario": self.id_usuario,
@@ -82,7 +85,7 @@ class Usuario:
     #         return None
         
     @classmethod
-    def get_usuario(cls, user):
+    def get(cls, user):
         """se utiliza para buscar y obtener información detallada de un usuario en la base de datos 
         basándose en su nombre de usuario 'alias'."""
         
@@ -156,7 +159,7 @@ class Usuario:
 
 #elimina usuario      
     @classmethod
-    def delete_user(cls, id_usuario):
+    def delete_usuario(cls, id_usuario):
         """Elimina un usuario existente en la base de datos."""
         
         #primero tendria que Validar que el usuario exista, PARA EL MANEJO DE ERROR
