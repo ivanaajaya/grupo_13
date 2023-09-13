@@ -1,7 +1,8 @@
 from ..database import DatabaseConnection
-
-
+from mysql.connector import Error
 class Servidor:
+    """Modelo de Película"""
+
     def __init__(self, id_servidor=None, nombre_servidor=None, fecha_creacion=None, descripcion=None, id_usuario=None):
         self.id_servidor = id_servidor
         self.nombre_servidor = nombre_servidor
@@ -9,61 +10,95 @@ class Servidor:
         self.descripcion = descripcion
         self.id_usuario = id_usuario
 
+ 
+    def serialize(self):
+        return {
+            "id_servidor": self.id_servidor,
+            "nombre_servidor": self.nombre_servidor,
+            "fecha_creacion": self.fecha_creacion,
+            "descripcion": self.descripcion,
+            "id_usuario": self.id_usuario,
+        }
+
     @classmethod
-    def get_servidor(cls, id_servidor):
-        # Este método recupera información sobre un servidor de la base de datos
-        # basado en su ID de servidor.
-        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM proyecto.usuarios WHERE id_servidor = %s;"
-        params = (id_servidor,)
+    def get_servidor(cls, servidor):
+        query = """SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores WHERE id_servidor = %s"""
+        params = servidor,
+        result = DatabaseConnection.fetch_one(query, params=params)
+        return cls(*result)
+    # En la clase Servidor
+    @classmethod
+    def obtener_servidor_por_id(cls, servidor_id):
+        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores WHERE id_servidor = %s"
+        params = (servidor_id,)
         result = DatabaseConnection.fetch_one(query, params)
-        print(type(result))
-        if result is not None:
-            # Si se encontró un servidor con el ID proporcionado, se crea una instancia
-            # de la clase Servidor con los datos recuperados y se devuelve.
-            return cls(
-                id_servidor=result[0],
-                nombre_servidor=result[1],
-                fecha_creacion=result[2],
-                descripcion=result[3],
-                id_usuario=result[4],
-            )
+        
+        if result:
+            return cls(*result)
         else:
-            # Si no se encuentra ningún servidor, se devuelve None.
             return None
 
     @classmethod
-    def create_servidor(cls, servidor):
-        # Este método crea un nuevo servidor en la base de datos.
-        query = "INSERT INTO proyecto.servidor (id_servidor, nombre_servidor, fecha_creacion, descripcion) VALUES (%s, %s, %s, %s);"
-        params = (servidor.id_servidor, servidor.nombre_servidor,
-                  servidor.fecha_creacion, servidor.descripcion)
+    def get_todos_servidores(cls):
+        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores;"
+        results = DatabaseConnection.fetch_all(query)
 
-        try:
-            # Intenta ejecutar la consulta de inserción en la base de datos.
-            # Si tiene éxito, devuelve un mensaje de éxito; de lo contrario, devuelve un mensaje de error.
-            result = DatabaseConnection.execute_query(query, params)
-            if result:
-                return "El servidor se ha registrado correctamente."
-            else:
-                return "Hubo un problema al registrar el servidor."
-        except Exception as e:
-            # En caso de excepción, se captura y se devuelve un mensaje de error detallado.
-            return f"Error al registrar el servidor: {str(e)}"
+        servidores = []
+        if results is not None:
+            for result in results:
+                servidores.append(cls(*result))
+        return servidores
+    
+    
+    @classmethod
+    def crear_servidor(cls, nombre_servidor, fecha_creacion, descripcion, id_usuario):
+        query = "INSERT INTO servidores (nombre_servidor, fecha_creacion, descripcion, id_usuario) VALUES (%s, %s, %s, %s);"
+        params = (nombre_servidor, fecha_creacion, descripcion, id_usuario)
+        result = DatabaseConnection.execute_query(query, params)
+
+        if result:
+            return cls(
+                id_servidor=result,
+                nombre_servidor=nombre_servidor,
+                fecha_creacion=fecha_creacion,
+                descripcion=descripcion,
+                id_usuario=id_usuario,
+            )
+        else:
+            return None
 
     @classmethod
-    def delete_servidor(cls, id_servidor):
-        # Este método elimina un servidor de la base de datos basado en su ID de servidor.
-        query = "DELETE FROM proyecto.servidor WHERE id_servidor = %s;"
+    def eliminar_servidor(cls, id_servidor):
+        cls.remove_foreign_key_constraints(id_servidor)
+        query = "DELETE FROM servidores WHERE id_servidor = %s;"
         params = (id_servidor,)
+        result = DatabaseConnection.execute_query(query, params)
 
+        if result:
+            return True
+        else:
+            return False
+        
+
+        
+    @classmethod
+    def remove_foreign_key_constraints(cls, id_servidor):
+        """Elimina las restricciones de clave externa relacionadas con un servidor."""
         try:
-            # Intenta ejecutar la consulta de eliminación en la base de datos.
-            # Si tiene éxito, devuelve un mensaje de éxito; de lo contrario, devuelve un mensaje de error.
-            result = DatabaseConnection.execute_query(query, params)
-            if result:
-                return "El servidor se ha eliminado correctamente."
-            else:
-                return "No se encontró el servidor para eliminar."
-        except Exception as e:
-            # En caso de excepción, se captura y se devuelve un mensaje de error detallado.
-            return f"Error al eliminar el servidor: {str(e)}"
+            connection = DatabaseConnection.get_connection()
+            cursor = connection.cursor()
+            cursor.execute("SET FOREIGN_KEY_CHECKS=0")  # Desactiva temporalmente la verificación de FK
+
+            # Elimina las restricciones de clave externa relacionadas con el servidor
+            query = "ALTER TABLE canales DROP FOREIGN KEY canales_ibfk_2"
+            cursor.execute(query)
+
+            # Restaura la verificación de FK
+            cursor.execute("SET FOREIGN_KEY_CHECKS=1")
+        except Error as e:
+            # Maneja cualquier error que pueda ocurrir al eliminar las restricciones de FK
+            print(f"Error al eliminar restricciones de FK: {e}")
+        finally:
+            if cursor:
+                cursor.close()
+

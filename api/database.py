@@ -10,11 +10,11 @@ class DatabaseConnection:
     def get_connection(cls):
         if cls._connection is None:
             cls._connection = mysql.connector.connect(
-            host='127.0.0.1',
-            user='ivana',
+            host='localhost',
+            user='root',
             port = "3306",
-            password='root1234+',
-            database='proyecto'
+            password='1998Rojo-',
+            database='PROYECTO'
         )
         return cls._connection
 

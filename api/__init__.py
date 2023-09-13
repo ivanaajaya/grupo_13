@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-# from .routes.app_blueprint import App_Blueprint 
+from .routes.app_blueprint import app_blueprint
 
 
 def inicializar_app():
@@ -9,6 +9,6 @@ def inicializar_app():
     app.config.from_object(Config)
     
     
-    # app.register_blueprint(app_blueprint)
+    app.register_blueprint(app_blueprint)
     
     return app
