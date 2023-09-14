@@ -1,6 +1,6 @@
 from ...database import DatabaseConnection
 from .usuario_roles_model import UserRoleModel
-# from .usuario_estado_model import UserStatusModel
+from .usuario_estado_model import UserStatusModel
 
 class Usuario: 
     
@@ -17,8 +17,8 @@ class Usuario:
         self.password = kwargs.get('password')
         self.correo_electronico = kwargs.get('correo_electronico')
         self.fecha_registro = kwargs.get('fecha_registro')
-        self.estado_activo = kwargs.get('estado_activo')
-        self.rol_id = kwargs.get('rol_id')
+        self.id_estado = kwargs.get('id_estado')
+        #self.rol_id = kwargs.get('rol_id')
         
     # def __init__(self, id_usuario=None, alias=None, nombre=None, apellido=None, fecha_nacimiento=None, contraseña=None, correo_electronico=None, fecha_registro=None):
     #     self.id_usuario = id_usuario
@@ -46,16 +46,16 @@ class Usuario:
             "password": self.password,
             "correo_electronico": self.correo_electronico,
             "fecha_registro": self.fecha_registro,
-            "estado": self.estado_activo,
-            "rol": UserRoleModel.get(UserRoleModel(rol_id = self.rol_id)).serialize()
+            "estado": UserStatusModel.get(UserStatusModel(id_estado = self.id_estado)).serialize()
         }
+        # "rol": UserRoleModel.get(UserRoleModel(rol_id = self.rol_id)).serialize()
         
     @classmethod
     def is_registered(cls, user):
         """verificar si un usuario está registrado en la base de datos utilizando su nombre de alias y contraseña."""
         
-        query = """SELECT user_id FROM proyecto.usuario 
-        WHERE username = %(alias)s and password = %(password)s"""
+        query = """SELECT id_usuario FROM proyecto.Usuarios 
+        WHERE alias = %(alias)s and password = %(password)s"""
         params = user.__dict__
         result = DatabaseConnection.fetch_one(query, params=params) #Los parámetros para la consulta se pasan como un diccionario (params).
 
@@ -89,7 +89,7 @@ class Usuario:
         """se utiliza para buscar y obtener información detallada de un usuario en la base de datos 
         basándose en su nombre de usuario 'alias'."""
         
-        query = """SELECT * FROM proyecto.usuario 
+        query = """SELECT * FROM proyecto.usuarios 
         WHERE alias = %(alias)s"""
         params = user.__dict__
         result = DatabaseConnection.fetch_one(query, params=params)
@@ -98,16 +98,16 @@ class Usuario:
             return cls(
                 id_usuario=result[0],
                 alias=result[1],
-                nombre=result[1],
-                apellido=result[2],
-                fecha_nacimiento=result[3],
-                password=result[4],
-                correo_electronico=result[5],
-                fecha_registro=result[6],
-                estado_activo=result[7],
-                rol_id=result[8]
+                nombre=result[2],
+                apellido=result[3],
+                fecha_nacimiento=result[4],
+                password=result[5],
+                correo_electronico=result[6],
+                fecha_registro=result[7],
+                id_estado=result[8]
             )
         return None
+     # rol_id=result[8]
         
 # Registrar un usuario
     @classmethod
@@ -115,8 +115,8 @@ class Usuario:
         
         #primero tendria que Validar que el Alias del usuario no esté en uso
         
-        query = """INSERT INTO proyecto.usuario  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, fecha_registro, estado_activo, rol_id) 
-        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(fecha_registro)s, %(estado_activo)s, %(rol_id)s);"""
+        query = """INSERT INTO proyecto.usuarios  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, fecha_registro, id_estado) 
+        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(fecha_registro)s, %(id_estado)s);"""
         
         # params = {
         # "alias": usuario.alias,
@@ -146,7 +146,7 @@ class Usuario:
         
         #primero tendria que Validar que el Alias del usuario no esté en uso, PARA EL MANEJO DE ERROR
         
-        query = """UPDATE proyecto.usuario SET nombre = %(nombre)s, apellido = %(apellido)s, fecha_nacimiento = %(fecha_nacimiento)s, password = %(password)s, correo_electronico = %(correo_electronico)s, fecha_registro = %(fecha_registro)s, estado_activo = %(estado_activo)s, rol_id = %(rol_id)s  
+        query = """UPDATE proyecto.usuario SET nombre = %(nombre)s, apellido = %(apellido)s, fecha_nacimiento = %(fecha_nacimiento)s, password = %(password)s, correo_electronico = %(correo_electronico)s, fecha_registro = %(fecha_registro)s, id_estado = %(id_estado)s  
         WHERE alias = %(alias)s"""
         params=usuario.__dict__
         # Ejecuta la consulta de actualizacion
@@ -164,7 +164,7 @@ class Usuario:
         
         #primero tendria que Validar que el usuario exista, PARA EL MANEJO DE ERROR
         
-        query = "DELETE FROM proyecto.usuario WHERE id_usuario = %s"
+        query = "DELETE FROM proyecto.usuarios WHERE id_usuario = %s"
         params = (id_usuario,)
 
         # Ejecuta la consulta de eliminación

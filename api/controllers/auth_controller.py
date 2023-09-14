@@ -9,12 +9,12 @@ class UserController:
     def login(cls):
         data = request.json
         user = Usuario(
-            username = data.get('username'),
+            alias = data.get('alias'),
             password = data.get('password')
         )
         
         if Usuario.is_registered(user):
-            session['username'] = data.get('username')
+            session['alias'] = data.get('alias')
             return {"message": "Sesion iniciada"}, 200
         else:
             return {"message": "Usuario o contraseña incorrectos"}, 401
@@ -43,8 +43,8 @@ class UserController:
 # Mostrar perfil
     @classmethod
     def show_profile(cls):
-        username = session.get('username')
-        user = Usuario.get(Usuario(username = username))
+        alias = session.get('alias')
+        user = Usuario.get(Usuario(alias = alias))
         if user is None:
             return {"message": "Usuario no encontrado"}, 404
         else:
@@ -53,5 +53,5 @@ class UserController:
 # cerrar sesión
     @classmethod
     def logout(cls):
-        session.pop('username', None)
+        session.pop('alias', None)
         return {"message": "Sesion cerrada"}, 200
