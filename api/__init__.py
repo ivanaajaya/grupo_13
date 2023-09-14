@@ -1,10 +1,7 @@
 from flask import Flask #para crear una aplicación web
 from flask_cors import CORS #permitir que otros dominios realicen solicitudes HTTP a tu aplicación y es una parte importante de la configuración de seguridad y acceso en aplicaciones web
 from config import Config
-<<<<<<< HEAD
-=======
 from .routes.app_blueprint import app_blueprint
->>>>>>> ccd23d7e629a38c6a9dad2cdc46fb020acff0204
 
 # from .routes.app_blueprint import App_Blueprint 
 from .routes.auth_blueprint import auth_blueprint
@@ -16,7 +13,6 @@ def inicializar_app():
     
     app = Flask(__name__, static_folder = Config.STATIC_FOLDER, template_folder = Config.TEMPLATE_FOLDER)
     
-<<<<<<< HEAD
     #Esto permite que las solicitudes de origen cruzado compartan cookies y encabezados de autenticación.
     CORS(app, supports_credentials=True)
 
@@ -24,9 +20,7 @@ def inicializar_app():
     app.config.from_object(
         Config
     )
-=======
-    app.register_blueprint(app_blueprint)
->>>>>>> ccd23d7e629a38c6a9dad2cdc46fb020acff0204
+    # app.register_blueprint(app_blueprint)
     
     # Configura la clase DatabaseConnection con la configuración de la aplicación Flask.
     DatabaseConnection.set_config(app.config)

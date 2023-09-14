@@ -1,10 +1,7 @@
 from flask import Blueprint
-<<<<<<< HEAD
-from ..controllers.mensaje_controller import App_controller
-=======
+# from ..controllers.mensaje_controller import App_controller
 from ..controllers.servidor_controller import ServidoresController
-from ..controllers.controller_app import MensajeController
->>>>>>> ccd23d7e629a38c6a9dad2cdc46fb020acff0204
+# from ..controllers.controller_app import MensajeController
 
 
 
