@@ -2,6 +2,11 @@
 CREATE DATABASE PROYECTO;
 USE PROYECTO; 
 
+CREATE TABLE estado_usuario (
+    id_estado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_estado VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE Usuarios (
     id_usuario INT NOT NULL AUTO_INCREMENT,
     alias VARCHAR(50) NOT NULL,
@@ -12,7 +17,9 @@ CREATE TABLE Usuarios (
     estado_activo BOOLEAN NOT NULL,
     correo_electronico VARCHAR(50) NOT NULL,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id_usuario)
+    id_estado INT,
+    PRIMARY KEY (id_usuario),
+    CONSTRAINT fk_usuario_estado_id FOREIGN KEY (id_estado) REFERENCES estado_usuario(id_estado)
 );
 
 CREATE TABLE servidores (
