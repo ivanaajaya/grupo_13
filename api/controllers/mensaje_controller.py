@@ -1,4 +1,4 @@
-from ..model.models_app import App
+# from ..model.models_app import App
 from flask import request, jsonify
 from ..model.mensajes_model import Mensaje
 from ..database import DatabaseConnection
