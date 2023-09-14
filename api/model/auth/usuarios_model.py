@@ -14,7 +14,7 @@ class Usuario:
         self.nombre = kwargs.get('nombre')
         self.apellido = kwargs.get('apellido')
         self.fecha_nacimiento = kwargs.get('fecha_nacimiento')
-        self.contraseña = kwargs.get('contraseña')
+        self.password = kwargs.get('password')
         self.correo_electronico = kwargs.get('correo_electronico')
         self.fecha_registro = kwargs.get('fecha_registro')
         self.estado_activo = kwargs.get('estado_activo')
@@ -43,7 +43,7 @@ class Usuario:
             "nombre": self.nombre,
             "apellido": self.apellido,
             "fecha_nacimiento": self.fecha_nacimiento,
-            "contraseña": self.contraseña,
+            "password": self.password,
             "correo_electronico": self.correo_electronico,
             "fecha_registro": self.fecha_registro,
             "estado": self.estado_activo,
@@ -55,7 +55,7 @@ class Usuario:
         """verificar si un usuario está registrado en la base de datos utilizando su nombre de alias y contraseña."""
         
         query = """SELECT user_id FROM proyecto.usuario 
-        WHERE username = %(alias)s and password = %(contraseña)s"""
+        WHERE username = %(alias)s and password = %(password)s"""
         params = user.__dict__
         result = DatabaseConnection.fetch_one(query, params=params) #Los parámetros para la consulta se pasan como un diccionario (params).
 
@@ -101,7 +101,7 @@ class Usuario:
                 nombre=result[1],
                 apellido=result[2],
                 fecha_nacimiento=result[3],
-                contraseña=result[4],
+                password=result[4],
                 correo_electronico=result[5],
                 fecha_registro=result[6],
                 estado_activo=result[7],
@@ -115,15 +115,15 @@ class Usuario:
         
         #primero tendria que Validar que el Alias del usuario no esté en uso
         
-        query = """INSERT INTO proyecto.usuario  (alias, nombre, apellido, fecha_nacimiento, contraseña, correo_electronico, fecha_registro, estado_activo, rol_id) 
-        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(contraseña)s, %(correo_electronico)s, %(fecha_registro)s, %(estado_activo)s, %(rol_id)s);"""
+        query = """INSERT INTO proyecto.usuario  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, fecha_registro, estado_activo, rol_id) 
+        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(fecha_registro)s, %(estado_activo)s, %(rol_id)s);"""
         
         # params = {
         # "alias": usuario.alias,
         # "nombre": usuario.nombre,
         # "apellido": usuario.apellido,
         # "fecha_nacimiento": usuario.fecha_nacimiento,
-        # "contraseña": usuario.contraseña,
+        # "password": usuario.password,
         # "correo_electronico": usuario.correo_electronico,
         # "fecha_registro": usuario.fecha_registro,
         # "estado_id": usuario.estado_id,
@@ -146,7 +146,7 @@ class Usuario:
         
         #primero tendria que Validar que el Alias del usuario no esté en uso, PARA EL MANEJO DE ERROR
         
-        query = """UPDATE proyecto.usuario SET nombre = %(nombre)s, apellido = %(apellido)s, fecha_nacimiento = %(fecha_nacimiento)s, contraseña = %(contraseña)s, correo_electronico = %(correo_electronico)s, fecha_registro = %(fecha_registro)s, estado_activo = %(estado_activo)s, rol_id = %(rol_id)s  
+        query = """UPDATE proyecto.usuario SET nombre = %(nombre)s, apellido = %(apellido)s, fecha_nacimiento = %(fecha_nacimiento)s, password = %(password)s, correo_electronico = %(correo_electronico)s, fecha_registro = %(fecha_registro)s, estado_activo = %(estado_activo)s, rol_id = %(rol_id)s  
         WHERE alias = %(alias)s"""
         params=usuario.__dict__
         # Ejecuta la consulta de actualizacion

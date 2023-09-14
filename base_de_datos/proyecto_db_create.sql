@@ -13,8 +13,7 @@ CREATE TABLE Usuarios (
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(20) NOT NULL,
     fecha_nacimiento DATE,
-    contraseña VARCHAR(200) NOT NULL,
-    estado_activo BOOLEAN NOT NULL,
+    password VARCHAR(200) NOT NULL,
     correo_electronico VARCHAR(50) NOT NULL,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_estado INT,
@@ -35,7 +34,7 @@ CREATE TABLE servidores (
 CREATE TABLE roles (
     id_rol INT NOT NULL AUTO_INCREMENT,
     nombre_rol VARCHAR(50) NOT NULL,
-    permisos VARCHAR(20),
+    permisos VARCHAR(200),
     id_usuario INT,
     PRIMARY KEY (id_rol),
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
