@@ -1,0 +1,2 @@
+INSERT INTO proyecto.usuarios (alias, nombre, apellido, fecha_nacimiento, contraseña, correo_electronico, estado_activo) 
+VALUES ("alias1", "nombre", "apellido", "2000-10-10", "contraseña", "correo_electronico", 1);
