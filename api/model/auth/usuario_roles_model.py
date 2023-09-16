@@ -17,7 +17,7 @@ class UserRoleModel:
     
     @classmethod
     def get(cls, rol):
-        query = """SELECT id_rol, nombre_rol, permisos, id_usuario FROM proyecto.roles WHERE id_rol = %(id_rol)s"""
+        query = """SELECT id_rol, nombre_rol, permisos, id_usuario FROM proyecto_db.roles WHERE id_rol = %(id_rol)s"""
         params = rol.__dict__
         result = DatabaseConnection.fetch_one(query, params=params)
 

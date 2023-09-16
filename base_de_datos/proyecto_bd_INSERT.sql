@@ -1,18 +1,14 @@
-use proyecto;
+USE proyecto_db;
 
-INSERT INTO estado_usuario (nombre_estado) VALUES ('active');
-INSERT INTO estado_usuario (nombre_estado) VALUES ('suspended');
-INSERT INTO estado_usuario (nombre_estado) VALUES ('deactivated');
+INSERT INTO roles (nombre_rol, permisos) VALUES ('Anonimo', "Leer mensajes públicos, Registrarse en la plataforma");
+INSERT INTO roles (nombre_rol, permisos) VALUES ('Registrado', 'Enviar mensajes públicos, Leer mensajes privados');
+INSERT INTO roles (nombre_rol, permisos) VALUES ('Administrador', 'Todas las capacidades de Moderador, Eliminar o suspender cuentas de usuarios, Administrar roles de usuarios (asignar roles de Moderador o Administrador)');
 
-INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, id_estado) 
-VALUES ("alias1", "nombre", "apellido", "2000-10-10", "contraseña1", "correo_electronico", 1);
-INSERT INTO proyecto.usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, id_estado) 
-VALUES ("alias2", "nombre", "apellido", "2000-10-10", "contraseña2", "correo_electronico", 2);
-INSERT INTO proyecto.usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, id_estado) 
-VALUES ("alias3", "nombre", "apellido", "2000-10-10", "contraseña3", "correo_electronico", 3);
-
-INSERT INTO roles (nombre_rol, permisos,id_usuario) VALUES ('Anonimo', "Leer mensajes públicos, Registrarse en la plataforma",1);
-INSERT INTO roles (nombre_rol, permisos,id_usuario) VALUES ('Registrado', 'Enviar mensajes públicos, Leer mensajes privados',2);
-INSERT INTO roles (nombre_rol, permisos,id_usuario) VALUES ('Administrador', 'Todas las capacidades de Moderador, Eliminar o suspender cuentas de usuarios, Administrar roles de usuarios (asignar roles de Moderador o Administrador)',3);
+INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, id_rol) 
+VALUES ("alias1", "nombre", "apellido", "2000-10-10", "contraseña1", "correo_electronico1", 1, 1);
+INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, id_rol) 
+VALUES ("alias2", "nombre", "apellido", "2000-10-10", "contraseña2", "correo_electronico2", 1, 1);
+INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, id_rol) 
+VALUES ("alias3", "nombre", "apellido", "2000-10-10", "contraseña3", "correo_electronico3", 1, 1);
 
 

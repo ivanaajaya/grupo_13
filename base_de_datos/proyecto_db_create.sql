@@ -1,24 +1,24 @@
+CREATE DATABASE proyecto_db;
+USE proyecto_db; 
 
-CREATE DATABASE PROYECTO;
-USE PROYECTO; 
-
-CREATE TABLE estado_usuario (
-    id_estado INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_estado VARCHAR(50) NOT NULL
+CREATE TABLE roles (
+    id_rol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_rol VARCHAR(50) NOT NULL UNIQUE,
+    permisos VARCHAR(200)
 );
 
 CREATE TABLE Usuarios (
-    id_usuario INT NOT NULL AUTO_INCREMENT,
-    alias VARCHAR(50) NOT NULL,
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    alias VARCHAR(50) NOT NULL UNIQUE,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(20) NOT NULL,
     fecha_nacimiento DATE,
-    password VARCHAR(200) NOT NULL,
-    correo_electronico VARCHAR(50) NOT NULL,
+    password VARCHAR(200) NOT NULL ,
+    correo_electronico VARCHAR(50) NOT NULL UNIQUE,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id_estado INT,
-    PRIMARY KEY (id_usuario),
-    CONSTRAINT fk_usuario_estado_id FOREIGN KEY (id_estado) REFERENCES estado_usuario(id_estado)
+    estado_activo boolean,
+    id_rol INT,
+    CONSTRAINT fk_usuario_rol_id FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
 
 CREATE TABLE servidores (
@@ -28,15 +28,6 @@ CREATE TABLE servidores (
     descripcion VARCHAR(50),
     id_usuario INT,
     PRIMARY KEY (id_servidor),
-    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
-);
-
-CREATE TABLE roles (
-    id_rol INT NOT NULL AUTO_INCREMENT,
-    nombre_rol VARCHAR(50) NOT NULL,
-    permisos VARCHAR(200),
-    id_usuario INT,
-    PRIMARY KEY (id_rol),
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
