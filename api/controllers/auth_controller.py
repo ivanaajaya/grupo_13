@@ -18,27 +18,6 @@ class UserController:
             return {"message": "Sesion iniciada"}, 200
         else:
             return {"message": "Usuario o contraseña incorrectos"}, 401
-    
-    """ @classmethod
-    def show_profile(cls):
-        username = session.get('username')
-        user = User.get(User(username = username))
-        if user is None:
-            return {"message": "Usuario no encontrado"}, 404
-        else:
-            return {
-                "user_id": user.user_id,
-                "username": user.username,
-                "email": user.email,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "date_of_birth": user.date_of_birth,
-                "phone_number": user.phone_number,
-                "creation_date": user.creation_date,
-                "last_login": user.last_login,
-                "status_id": user.status_id,
-                "role_id": user.role_id
-            }, 200 """
 
 # Mostrar perfil
     @classmethod
@@ -55,3 +34,36 @@ class UserController:
     def logout(cls):
         session.pop('alias', None)
         return {"message": "Sesion cerrada"}, 200
+
+# Registro de nuevo usuario
+    @classmethod
+    def register(cls):
+        data = request.json
+        alias = data.get('alias')
+        correo_electronico=data.get('correo_electronico')
+
+        # Verificar si el alias ya está en uso
+        if Usuario.is_alias_in_use(alias):
+            return {"message": "Alias ya está en uso"}, 400
+        # Verificar si el correo electrónico ya está en uso
+        if Usuario.is_email_in_use(correo_electronico):
+            return {"message": "Correo electrónico ya está en uso"}, 400
+
+
+        # Crear el nuevo usuario
+        new_user = Usuario(
+            alias=alias,
+            nombre=data.get('nombre'),
+            apellido=data.get('apellido'),
+            fecha_nacimiento=data.get('fecha_nacimiento'),
+            password=data.get('password'),
+            correo_electronico= correo_electronico,
+            fecha_registro=data.get('fecha_registro'),
+            estado_activo=data.get('estado_activo'),
+            id_rol=data.get('id_rol')
+        )
+
+        if Usuario.create_usuario(new_user):
+            return {"message": "Usuario registrado exitosamente"}, 200
+        else:
+            return {"message": "Error al registrar usuario"}, 500
