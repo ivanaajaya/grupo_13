@@ -66,4 +66,19 @@ class UserController:
         if Usuario.create_usuario(new_user):
             return {"message": "Usuario registrado exitosamente"}, 200
         else:
-            return {"message": "Error al registrar usuario"}, 500
+            return {"message": "Error al registrar usuario"}, 500  
+        
+# Restablece la contraseña
+    @classmethod
+    def reset_password(cls, alias, new_password):
+        """Restablece la contraseña de un usuario existente."""
+
+        # Verificar si el alias existe en la base de datos
+        if not Usuario.is_alias_in_use(alias):
+            return {"message": "Alias no encontrado"}, 404
+
+        # Llama al método update_password para actualizar la contraseña
+        if Usuario.update_password(alias, new_password):
+            return {"message": "Contraseña restablecida exitosamente"}, 200
+        else:
+            return {"message": "Error al restablecer la contraseña"}, 500

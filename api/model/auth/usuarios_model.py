@@ -125,8 +125,6 @@ class Usuario:
         else:
             return False
         
-    
-
 # Modifica usuario
     @classmethod
     def update_usuario(cls, usuario):
@@ -161,6 +159,19 @@ class Usuario:
             return True
         else:
             return False
+    
+#actualizar contraseña
+    @classmethod
+    def update_password(cls, alias, new_password):
+        """Actualiza la contraseña de un usuario en la base de datos."""
+
+        query = """UPDATE proyecto_db.usuarios SET password = %(new_password)s WHERE alias = %(alias)s"""
+        params = {'alias': alias, 'password': new_password}
+
+        # Ejecuta la consulta de actualización de contraseña
+        result = DatabaseConnection.execute_query(query, params=params)
+
+        return result  # Devuelve el resultado de la actualización (True o False)
 
 #Listado con los servidores a los que el usuario pertenece
     @staticmethod

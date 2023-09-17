@@ -8,3 +8,4 @@ auth_blueprint.route('/login', methods=['POST'])(UserController.login)#para envi
 auth_blueprint.route('/profile', methods=['GET'])(UserController.show_profile)#ver el perfil
 auth_blueprint.route('/logout', methods=['GET'])(UserController.logout)#salir de la session
 auth_blueprint.route('/register', methods=['POST'])(UserController.register)#registra un usuario 
+auth_blueprint.route('/reset', methods=['POST'])(UserController.reset_password)#Restablece la contraseña
