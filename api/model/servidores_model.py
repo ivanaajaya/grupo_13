@@ -22,14 +22,14 @@ class Servidor:
 
     @classmethod
     def get_servidor(cls, servidor):
-        query = """SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores WHERE id_servidor = %s"""
+        query = """SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM proyecto_db.servidores WHERE id_servidor = %s"""
         params = servidor,
         result = DatabaseConnection.fetch_one(query, params=params)
         return cls(*result)
     # En la clase Servidor
     @classmethod
     def obtener_servidor_por_id(cls, servidor_id):
-        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores WHERE id_servidor = %s"
+        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM proyecto_db.servidores WHERE id_servidor = %s"
         params = (servidor_id,)
         result = DatabaseConnection.fetch_one(query, params)
         
@@ -40,7 +40,7 @@ class Servidor:
 
     @classmethod
     def get_todos_servidores(cls):
-        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores;"
+        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM proyecto_db.servidores;"
         results = DatabaseConnection.fetch_all(query)
 
         servidores = []
@@ -52,7 +52,7 @@ class Servidor:
     
     @classmethod
     def crear_servidor(cls, nombre_servidor, fecha_creacion, descripcion, id_usuario):
-        query = "INSERT INTO servidores (nombre_servidor, fecha_creacion, descripcion, id_usuario) VALUES (%s, %s, %s, %s);"
+        query = "INSERT INTO proyecto_db.servidores (nombre_servidor, fecha_creacion, descripcion, id_usuario) VALUES (%s, %s, %s, %s);"
         params = (nombre_servidor, fecha_creacion, descripcion, id_usuario)
         result = DatabaseConnection.execute_query(query, params)
 
@@ -70,7 +70,7 @@ class Servidor:
     @classmethod
     def eliminar_servidor(cls, id_servidor):
         cls.remove_foreign_key_constraints(id_servidor)
-        query = "DELETE FROM servidores WHERE id_servidor = %s;"
+        query = "DELETE FROM proyecto_db.servidores WHERE id_servidor = %s;"
         params = (id_servidor,)
         result = DatabaseConnection.execute_query(query, params)
 
@@ -78,8 +78,6 @@ class Servidor:
             return True
         else:
             return False
-        
-
         
     @classmethod
     def remove_foreign_key_constraints(cls, id_servidor):

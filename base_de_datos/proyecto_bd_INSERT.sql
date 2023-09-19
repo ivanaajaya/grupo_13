@@ -10,5 +10,3 @@ INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, corre
 VALUES ("alias2", "nombre", "apellido", "2000-10-10", "contraseña2", "correo_electronico2", 1, 1);
 INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, id_rol) 
 VALUES ("alias3", "nombre", "apellido", "2000-10-10", "contraseña3", "correo_electronico3", 1, 1);
-
-

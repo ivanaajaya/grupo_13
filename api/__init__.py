@@ -2,7 +2,7 @@ from flask import Flask #para crear una aplicación web
 from flask_cors import CORS #permitir que otros dominios realicen solicitudes HTTP a tu aplicación y es una parte importante de la configuración de seguridad y acceso en aplicaciones web
 from config import Config
 
-from .routes.app_blueprint import app_blueprint
+from .routes.servidor_blueprint import app_blueprint
 
 #  from .routes.app_blueprint import App_Blueprint 
 from .routes.auth_blueprint import auth_blueprint
