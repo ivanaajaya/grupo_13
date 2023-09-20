@@ -1,7 +1,7 @@
 from flask import Blueprint
 from ..controllers.mensaje_controller import MensajesController  # Importa el controlador de mensajes
 
-app_blueprint = Blueprint('App_blueprint', __name__)
+app_blueprint = Blueprint('mensaje_blueprint', __name__)
 
 app_blueprint.route('/mensajes', methods=['GET'])(MensajesController.mostrar_todos_mensajes)
 app_blueprint.route('/mensajes/<int:mensaje_id>', methods=['GET'])(MensajesController.mostrar_mensaje)

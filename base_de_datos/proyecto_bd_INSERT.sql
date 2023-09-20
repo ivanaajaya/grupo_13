@@ -12,6 +12,7 @@ INSERT INTO usuarios (alias, nombre, apellido, fecha_nacimiento, password, corre
 VALUES ("alias3", "nombre3", "apellido3", "2000-10-10", "contraseña3", "correo_electronico3", True, null, 3);
 
 
+<<<<<<< HEAD
 INSERT INTO proyecto_db.servidores (nombre_servidor, fecha_creacion, descripcion, id_usuario)
 VALUES
     ('Servidor1', '2023-09-20', 'Servidor de prueba 1', 1),
@@ -36,3 +37,11 @@ VALUES ('Canal de Música', 2, 2);
 
 
 
+=======
+-- Inserción de mensajes
+INSERT INTO mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal)
+VALUES
+    ('¡Hola a todos!', '10:15:00', '2023-09-20', 1, 1),
+    ('¿Alguien quiere unirse a una partida de ajedrez?', '14:30:45', '2023-09-20', 1, 2),
+    ('Hoy tenemos noticias importantes que discutir.', '09:00:00', '2023-09-19', 2, 3);
+>>>>>>> 980b9065a8dd6ba6b488f7246894c095f5d5042d
