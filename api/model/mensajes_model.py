@@ -24,51 +24,57 @@ class Mensaje:
 
     @classmethod
     def obtener_mensaje_por_id(cls, mensaje_id):
-        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM proyecto_db.mensajes WHERE id_mensaje = %s"
+        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM mensajes WHERE id_mensaje = %s"
         params = (mensaje_id,)
         result = DatabaseConnection.fetch_one(query, params)
-        
+
         if result:
             return cls(*result)
         else:
             return None
 
     @classmethod
-    def get_todos_mensajes(cls):
-        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM proyecto_db.mensajes;"
+    def obtener_todos_mensajes(cls):
+        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM mensajes;"
         results = DatabaseConnection.fetch_all(query)
 
         mensajes = []
-        if results is not None:
+        if results:
             for result in results:
                 mensajes.append(cls(*result))
         return mensajes
 
     @classmethod
-    def crear_mensaje(cls, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal):
-        query = "INSERT INTO proyecto_db.mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal) VALUES (%s, %s, %s, %s, %s);"
-        params = (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal)
-        result = DatabaseConnection.execute_query(query, params)
+    def crear_mensaje(cls, contenido, id_usuario, id_canal):
+        query = "INSERT INTO mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal) VALUES (%s, NOW(), NOW(), %s, %s);"
+        params = (contenido, id_usuario, id_canal)
 
-        if result:
-            return cls(
-                id_mensaje=result,
-                contenido=contenido,
-                hora_mensaje=hora_mensaje,
-                fecha_mensaje=fecha_mensaje,
-                id_usuario=id_usuario,
-                id_canal=id_canal,
-            )
-        else:
+        try:
+            result = DatabaseConnection.execute_query(query, params)
+            if result:
+                return cls(
+                    id_mensaje=result.lastrowid,  # Obtener el ID del mensaje recién creado
+                    contenido=contenido,
+                    hora_mensaje=result[1],
+                    fecha_mensaje=result[2],
+                    id_usuario=id_usuario,
+                    id_canal=id_canal,
+                )
+            else:
+                return None
+        except Error as e:
+            print(f"Error al crear mensaje: {e}")
             return None
 
     @classmethod
     def eliminar_mensaje(cls, id_mensaje):
-        query = "DELETE FROM proyecto_db.mensajes WHERE id_mensaje = %s;"
+        query = "DELETE FROM mensajes WHERE id_mensaje = %s;"
         params = (id_mensaje,)
-        result = DatabaseConnection.execute_query(query, params)
 
-        if result:
-            return True
-        else:
+        try:
+            result = DatabaseConnection.execute_query(query, params)
+            return True if result else False
+        except Error as e:
+            print(f"Error al eliminar mensaje: {e}")
             return False
+
