@@ -50,6 +50,24 @@ class Mensaje:
             )
         else:
             return None
+    @classmethod
+    def mostrar_todos_mensajes(cls):
+        query = "SELECT * FROM mensajes;"
+        results = DatabaseConnection.fetch_all(query)
+
+        mensajes = []
+        for result in results:
+            mensaje_instance = cls(
+                id_mensaje=result[0],
+                contenido=result[1],
+                hora_mensaje=result[2],
+                fecha_mensaje=result[3],
+                id_usuario=result[4],
+                id_canal=result[5]
+            )
+            mensajes.append(mensaje_instance)
+
+        return mensajes
 
     @classmethod
     def eliminar_mensaje(cls, id_mensaje):

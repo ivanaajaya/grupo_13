@@ -1,17 +1,6 @@
-# from ..model.models_app import App
+
 from flask import request, jsonify
 from ..model.mensajes_model import Mensaje
-from ..database import DatabaseConnection
-
-
-# -------------- CLASE CONTROLADOR ----------------
-#class eJEMPLO:
-
-class App_controller:
-    pass 
-
-# ----------MÉTODOS DE CLASE --------------
-    # @classmethod 
 
 class MensajeController:
 
@@ -33,6 +22,28 @@ class MensajeController:
                 return {"Mensaje": "No se encontró el mensaje"}, 404
         except Exception as e:
             print("Error en get_mensaje:", e)
+            return {"Mensaje": "Hubo un error en el servidor"}, 500
+            
+    @classmethod
+    def get_todos_mensajes(cls):
+        try:
+            mensajes = Mensaje.mostrar_todos_mensajes()  # Cambiar a la función que obtiene todos los mensajes
+            mensaje_list = []
+
+            for mensaje_instance in mensajes:
+                mensaje_data = {
+                    "id": mensaje_instance.id_mensaje,
+                    "contenido": mensaje_instance.contenido,
+                    "hora_mensaje": mensaje_instance.hora_mensaje,
+                    "fecha_mensaje": mensaje_instance.fecha_mensaje,
+                    "id_usuario": mensaje_instance.id_usuario,
+                    "id_canal": mensaje_instance.id_canal
+                }
+                mensaje_list.append(mensaje_data)
+
+            return jsonify(mensaje_list), 200
+        except Exception as e:
+            print("Error en get_todos_mensajes:", e)
             return {"Mensaje": "Hubo un error en el servidor"}, 500
 
     @classmethod
