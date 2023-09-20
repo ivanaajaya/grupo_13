@@ -18,7 +18,7 @@ class Canal:
     
     @classmethod
     def obtener_canal(cls, canal_id):
-        query = "SELECT id_scanal, nombre_canal, id_rol FROM canales WHERE id_canal = %s"
+        query = "SELECT id_canal, nombre_canal, id_rol FROM canales WHERE proyecto_db.id_canal = %s"
         params = (canal_id,)
         result = DatabaseConnection.fetch_one(query, params)
         
@@ -29,7 +29,7 @@ class Canal:
 
     @classmethod
     def get_todos_canales(cls):
-        query = "SELECT id_canal, nombre_canal, id_rol, id_servidor FROM canales;"
+        query = "SELECT id_canal, nombre_canal, id_rol, id_servidor FROM proyecto_db.canales;"
         results = DatabaseConnection.fetch_all(query)
 
         canales = []
