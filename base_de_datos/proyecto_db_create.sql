@@ -17,6 +17,7 @@ CREATE TABLE Usuarios (
     correo_electronico VARCHAR(50) NOT NULL UNIQUE,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estado_activo boolean,
+    imagen VARCHAR(255),
     id_rol INT,
     CONSTRAINT fk_usuario_rol_id FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );

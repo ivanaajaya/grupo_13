@@ -49,7 +49,6 @@ class UserController:
         if Usuario.is_email_in_use(correo_electronico):
             return {"message": "Correo electrónico ya está en uso"}, 400
 
-
         # Crear el nuevo usuario
         new_user = Usuario(
             alias=alias,
@@ -58,8 +57,9 @@ class UserController:
             fecha_nacimiento=data.get('fecha_nacimiento'),
             password=data.get('password'),
             correo_electronico= correo_electronico,
-            fecha_registro=data.get('fecha_registro'),
+            fecha_registro=None,
             estado_activo=data.get('estado_activo'),
+            imagen=None,
             id_rol=data.get('id_rol')
         )
 
@@ -77,8 +77,40 @@ class UserController:
         if not Usuario.is_alias_in_use(alias):
             return {"message": "Alias no encontrado"}, 404
 
-        # Llama al método update_password para actualizar la contraseña
         if Usuario.update_password(alias, new_password):
             return {"message": "Contraseña restablecida exitosamente"}, 200
         else:
             return {"message": "Error al restablecer la contraseña"}, 500
+        
+# Actualizar perfil del usuario
+    @classmethod
+    def update_profile(cls):
+        alias = session.get('alias')
+        data = request.form  # Asume que los datos se envían como formulario
+
+        # Verifica si el alias existe en la sesión
+        if not alias:
+            return {"message": "Usuario no autenticado"}, 401
+
+        # Verifica si el alias pertenece al usuario autenticado
+        if alias != data.get('alias'):
+            return {"message": "No tienes permiso para editar este perfil"}, 403
+
+        # Crea un objeto Usuario con los datos actualizados
+        updated_user = Usuario(
+            alias=alias,
+            nombre=data.get('nombre'),
+            apellido=data.get('apellido'),
+            fecha_nacimiento=data.get('fecha_nacimiento'),
+            password=data.get('password'),
+            correo_electronico=data.get('correo_electronico'),
+            fecha_registro=None,  # No deberías actualizar la fecha de registro
+            estado_activo=data.get('estado_activo'),
+            imagen=None,
+            id_rol=data.get('id_rol')
+        )
+
+        if Usuario.update_usuario(updated_user):
+            return {"message": "Perfil actualizado exitosamente"}, 200
+        else:
+            return {"message": "Error al actualizar el perfil"}, 500

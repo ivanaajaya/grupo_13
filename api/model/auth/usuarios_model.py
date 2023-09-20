@@ -17,9 +17,9 @@ class Usuario:
         self.password = kwargs.get('password')
         self.correo_electronico = kwargs.get('correo_electronico')
         self.fecha_registro = kwargs.get('fecha_registro')
-        self.estado_activo = kwargs.get('estado_activo', 1)
+        self.estado_activo = kwargs.get('estado_activo', True)
         self.id_rol = kwargs.get('id_rol')
-        #self.imagen = kwargs.get('imagen', None)  # Establece None como valor por defecto si 'imagen' no está en kwargs
+        self.imagen = kwargs.get('imagen', None)  # Establece None como valor por defecto si 'imagen' no está en kwargs
 
     def serialize(self):
         """Convierte la instancia de la clase en un diccionario.
