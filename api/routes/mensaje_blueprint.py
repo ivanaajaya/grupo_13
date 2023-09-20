@@ -1,10 +1,9 @@
 from flask import Blueprint
-from ..controllers.mensaje_controller import MensajeController
+from ..controllers.mensaje_controller import MensajesController  # Importa el controlador de mensajes
 
-app_blueprint = Blueprint('app_blueprint', __name__)
+app_blueprint = Blueprint('App_blueprint', __name__)
 
-# Rutas para mensajes
-app_blueprint.route('/mensajes', methods=['GET'])(MensajeController.get_todos_mensajes)
-app_blueprint.route('/mensajes/<int:mensaje_id>', methods=['GET'])(MensajeController.get_mensaje)
-app_blueprint.route('/mensajes', methods=['POST'])(MensajeController.create_mensaje)
-app_blueprint.route('/mensajes/<int:mensaje_id>', methods=['DELETE'])(MensajeController.delete_mensaje)
+app_blueprint.route('/mensajes', methods=['GET'])(MensajesController.mostrar_todos_mensajes)
+app_blueprint.route('/mensajes/<int:mensaje_id>', methods=['GET'])(MensajesController.mostrar_mensaje)
+app_blueprint.route('/mensajes', methods=['POST'])(MensajesController.crear_mensaje)
+app_blueprint.route('/mensajes/<int:mensaje_id>', methods=['DELETE'])(MensajesController.eliminar_mensaje)

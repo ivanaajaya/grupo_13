@@ -1,77 +1,72 @@
-
-from flask import request, jsonify
 from ..model.mensajes_model import Mensaje
+from flask import request, jsonify
 
-class MensajeController:
+class MensajesController:
 
     @classmethod
-    def get_mensaje(cls, mensaje_id):
+    def mostrar_todos_mensajes(cls):
+        """Obtener todos los mensajes"""
+        mensaje_objects = Mensaje.get_todos_mensajes()
+        mensajes = []
+        for mensaje in mensaje_objects:
+            mensajes.append(mensaje.serialize())
+        return mensajes, 200
+    
+    @classmethod
+    def mostrar_mensaje(cls, mensaje_id):
         try:
-            mensaje_instance = Mensaje.mostrar_mensaje(mensaje_id)
-            if mensaje_instance:
-                response_data = {
-                    "id": mensaje_instance.id_mensaje,
-                    "contenido": mensaje_instance.contenido,
-                    "hora_mensaje": mensaje_instance.hora_mensaje,
-                    "fecha_mensaje": mensaje_instance.fecha_mensaje,
-                    "id_usuario": mensaje_instance.id_usuario,
-                    "id_canal": mensaje_instance.id_canal
+            mensaje = Mensaje.obtener_mensaje_por_id(mensaje_id)
+
+            if mensaje:
+                mensaje_serializado = {
+                    "id_mensaje": mensaje.id_mensaje,
+                    "contenido": mensaje.contenido,
+                    "hora_mensaje": str(mensaje.hora_mensaje),
+                    "fecha_mensaje": str(mensaje.fecha_mensaje),
+                    "id_usuario": mensaje.id_usuario,
+                    "id_canal": mensaje.id_canal
                 }
-                return jsonify(response_data), 200
+                return mensaje_serializado, 200
             else:
-                return {"Mensaje": "No se encontró el mensaje"}, 404
+                return {"Mensaje": "Mensaje no encontrado"}, 404
         except Exception as e:
-            print("Error en get_mensaje:", e)
-            return {"Mensaje": "Hubo un error en el servidor"}, 500
-            
-    @classmethod
-    def get_todos_mensajes(cls):
-        try:
-            mensajes = Mensaje.mostrar_todos_mensajes()  # Cambiar a la función que obtiene todos los mensajes
-            mensaje_list = []
-
-            for mensaje_instance in mensajes:
-                mensaje_data = {
-                    "id": mensaje_instance.id_mensaje,
-                    "contenido": mensaje_instance.contenido,
-                    "hora_mensaje": mensaje_instance.hora_mensaje,
-                    "fecha_mensaje": mensaje_instance.fecha_mensaje,
-                    "id_usuario": mensaje_instance.id_usuario,
-                    "id_canal": mensaje_instance.id_canal
-                }
-                mensaje_list.append(mensaje_data)
-
-            return jsonify(mensaje_list), 200
-        except Exception as e:
-            print("Error en get_todos_mensajes:", e)
+            print("Error en mostrar_mensaje:", e)
             return {"Mensaje": "Hubo un error en el servidor"}, 500
 
     @classmethod
-    def create_mensaje(cls):
+    def crear_mensaje(cls):
         try:
             data = request.json
 
             mensaje = Mensaje(
                 contenido=data.get('contenido', ''),
+                hora_mensaje=data.get('hora_mensaje', ''),
+                fecha_mensaje=data.get('fecha_mensaje', ''),
                 id_usuario=data.get('id_usuario', None),
                 id_canal=data.get('id_canal', None)
             )
 
-            created = Mensaje.crear_mensaje(mensaje)
+            created_message = Mensaje.crear_mensaje(
+                mensaje.contenido,
+                mensaje.hora_mensaje,
+                mensaje.fecha_mensaje,
+                mensaje.id_usuario,
+                mensaje.id_canal
+            )
 
-            if created:
+            if created_message:
                 return {'message': 'Mensaje creado con éxito'}, 201
             else:
                 return {'message': 'No se pudo crear el mensaje'}, 500
         except Exception as e:
-            print("Error en create_mensaje:", e)
+            print("Error en crear_mensaje:", e)
             return {'message': 'Hubo un error en el servidor'}, 500
 
     @classmethod
-    def delete_mensaje(cls, mensaje_id):
+    def eliminar_mensaje(cls, mensaje_id):
         deleted_successfully = Mensaje.eliminar_mensaje(mensaje_id)
 
         if deleted_successfully:
-            return jsonify({"Mensaje": "Mensaje eliminado correctamente"}), 204
+            return jsonify({"message": "Mensaje eliminado correctamente"}), 204
         else:
-            return {"Mensaje": "No se encontró el mensaje o hubo un problema al eliminarlo"}, 404
+            return {"message": "No se encontró el mensaje o hubo un problema al eliminarlo"}, 404
