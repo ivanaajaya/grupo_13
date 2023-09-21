@@ -18,9 +18,9 @@ class Usuario:
         self.correo_electronico = kwargs.get('correo_electronico')
         self.fecha_registro = kwargs.get('fecha_registro')
         self.estado_activo = kwargs.get('estado_activo', True)
+        self.imagen = kwargs.get('imagen', "")
         self.id_rol = kwargs.get('id_rol')
-        self.imagen = kwargs.get('imagen', None)  # Establece None como valor por defecto si 'imagen' no está en kwargs
-
+        
     def serialize(self):
         """Convierte la instancia de la clase en un diccionario.
         Al serializar un objeto Python a JSON, se convierte en una cadena JSON 
@@ -38,6 +38,7 @@ class Usuario:
             "correo_electronico": self.correo_electronico,
             "fecha_registro": self.fecha_registro,
             "estado_activo": self.estado_activo,
+            "imagen": self.imagen,
             "rol": UserRoleModel.get(UserRoleModel(id_rol = self.id_rol)).serialize()
         }
 
@@ -102,7 +103,8 @@ class Usuario:
                 correo_electronico=result[6],
                 fecha_registro=result[7],
                 estado_activo=result[8],
-                id_rol=result[9]
+                imagen=result[9],
+                id_rol=result[10],
             )
         return None #usuario no encontrado
 

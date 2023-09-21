@@ -59,8 +59,8 @@ class UserController:
             correo_electronico= correo_electronico,
             fecha_registro=None,
             estado_activo=data.get('estado_activo'),
-            imagen=None,
-            id_rol=data.get('id_rol')
+            id_rol=data.get('id_rol'),
+            imagen=""
         )
 
         if Usuario.create_usuario(new_user):

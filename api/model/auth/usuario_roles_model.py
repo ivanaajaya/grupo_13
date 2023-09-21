@@ -10,7 +10,7 @@ class UserRoleModel:
         return {
             "id_rol": self.id_rol,
             "nombre_rol": self.nombre_rol,
-            "permisos": self.permisos,
+            "permisos": self.permisos
         }
     
     @classmethod
