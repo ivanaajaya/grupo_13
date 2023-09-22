@@ -10,7 +10,7 @@ class MensajesController:
             mensajes_serializados = [mensaje.serialize() for mensaje in mensajes]
             return jsonify(mensajes_serializados), 200
         except Exception as e:
-            print("Error en mostrar_todos_mensajes:", e)
+            print("Error en mostrar_todos_mensajes:", str(e))
             return {"mensaje": "Hubo un error en el servidor"}, 500
     
     @classmethod
@@ -24,13 +24,16 @@ class MensajesController:
             else:
                 return {"mensaje": "Mensaje no encontrado"}, 404
         except Exception as e:
-            print("Error en mostrar_mensaje:", e)
+            print("Error en mostrar_mensaje:", str(e))
             return {"mensaje": "Hubo un error en el servidor"}, 500
 
     @classmethod
     def crear_mensaje(cls):
         try:
-            data = request.json
+            data = request.get_json()
+
+            if not data:
+                return {'message': 'Datos no válidos'}, 400
 
             mensaje = Mensaje(
                 contenido=data.get('contenido', ''),
@@ -49,7 +52,7 @@ class MensajesController:
             else:
                 return {'message': 'No se pudo crear el mensaje'}, 500
         except Exception as e:
-            print("Error en crear_mensaje:", e)
+            print("Error en crear_mensaje:", str(e))
             return {'message': 'Hubo un error en el servidor'}, 500
 
     @classmethod
@@ -62,5 +65,6 @@ class MensajesController:
             else:
                 return {"message": "No se encontró el mensaje o hubo un problema al eliminarlo"}, 404
         except Exception as e:
-            print("Error en eliminar_mensaje:", e)
+            print("Error en eliminar_mensaje:", str(e))
             return {"message": "Hubo un error en el servidor"}, 500
+

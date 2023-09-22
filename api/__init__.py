@@ -26,6 +26,7 @@ def inicializar_app():
     DatabaseConnection.set_config(app.config)
     
     app.register_blueprint(app_blueprint)
+    app.register_blueprint(mensajes_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix = '/auth') #todas las rutas definidas en auth_blueprint estarán disponibles bajo el prefijo "/auth".
 
     return app

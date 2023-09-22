@@ -5,15 +5,14 @@ from flask import request, jsonify
 class CanalesController:
 
     @classmethod
-    def mostrar_todos_canales (cls):
-        """Obtener todas las películas"""
-        servidor_objects = Canal.get_todos_canales(
-        )  
-        canales = []
-        for servidor in servidor_objects:
-            canales.append(servidor.serialize())
-        # Retorna la lista serializadas con un código de estado 200
-        return canales, 200
+    def mostrar_todos_canales(cls):
+        try:
+            canales = Canal.obtener_todos_canales()
+            canales_serializados = [canal.serialize() for canal in canales]
+            return jsonify(canales_serializados), 200
+        except Exception as e:
+            print("Error en mostrar_todos_canales:", e)
+            return {"mensaje": "Hubo un error en el canal"}, 500
     
     @classmethod
     def mostrar_canal(cls, canal_id):
