@@ -3,6 +3,7 @@ from flask_cors import CORS #permitir que otros dominios realicen solicitudes HT
 from config import Config
 
 from .routes.servidor_blueprint import app_blueprint
+from .routes.mensajes_blueprint import mensaje_blueprint
 
 #  from .routes.app_blueprint import App_Blueprint 
 from .routes.auth_blueprint import auth_blueprint
@@ -26,7 +27,7 @@ def inicializar_app():
     DatabaseConnection.set_config(app.config)
     
     app.register_blueprint(app_blueprint)
-    app.register_blueprint(mensajes_blueprint)
+    app.register_blueprint(mensaje_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix = '/auth') #todas las rutas definidas en auth_blueprint estarán disponibles bajo el prefijo "/auth".
 
     return app

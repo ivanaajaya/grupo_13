@@ -16,8 +16,8 @@ class Mensaje:
         return {
             "id_mensaje": self.id_mensaje,
             "contenido": self.contenido,
-            "hora_mensaje": self.hora_mensaje,
-            "fecha_mensaje": self.fecha_mensaje,
+            "hora_mensaje": str(self.hora_mensaje),
+            "fecha_mensaje": str(self.fecha_mensaje),
             "id_usuario": self.id_usuario,
             "id_canal": self.id_canal,
         }
@@ -34,9 +34,10 @@ class Mensaje:
             return None
 
     @classmethod
-    def obtener_todos_mensajes(cls):
-        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM mensajes;"
-        results = DatabaseConnection.fetch_all(query)
+    def obtener_mensajes_por_canal(cls, canal_id):
+        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM mensajes WHERE id_canal = %s"
+        params = (canal_id,)
+        results = DatabaseConnection.fetch_all(query, params)
 
         mensajes = []
         if results:
@@ -45,19 +46,18 @@ class Mensaje:
         return mensajes
 
     @classmethod
-    def crear_mensaje(cls, contenido, id_usuario, id_canal):
-        query = "INSERT INTO mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal) VALUES (%s, NOW(), NOW(), %s, %s);"
-        params = (contenido, id_usuario, id_canal)
+    def crear_mensaje(cls, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal):
+        query = "INSERT INTO mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal) VALUES (%s, %s, %s, %s, %s);"
+        params = (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal)
 
         try:
             result = DatabaseConnection.execute_query(query, params)
             if result:
-                last_row_id = result.lastrowid
                 return cls(
-                    id_mensaje=last_row_id,  # Obtener el ID del mensaje recién creado
+                    id_mensaje=result.lastrowid,
                     contenido=contenido,
-                    hora_mensaje=None,  # La hora y fecha se establecerán automáticamente en la base de datos
-                    fecha_mensaje=None,
+                    hora_mensaje=hora_mensaje,
+                    fecha_mensaje=fecha_mensaje,
                     id_usuario=id_usuario,
                     id_canal=id_canal,
                 )
@@ -68,9 +68,9 @@ class Mensaje:
             return None
 
     @classmethod
-    def eliminar_mensaje(cls, id_mensaje):
+    def eliminar_mensaje(cls, mensaje_id):
         query = "DELETE FROM mensajes WHERE id_mensaje = %s;"
-        params = (id_mensaje,)
+        params = (mensaje_id,)
 
         try:
             result = DatabaseConnection.execute_query(query, params)
@@ -78,5 +78,3 @@ class Mensaje:
         except Error as e:
             print(f"Error al eliminar mensaje: {e}")
             return False
-
-
