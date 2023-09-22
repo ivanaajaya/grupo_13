@@ -4,6 +4,7 @@ from config import Config
 
 from .routes.servidor_blueprint import app_blueprint
 from .routes.mensajes_blueprint import mensaje_blueprint
+from .routes.canal_blueprint import canal_blueprint
 
 #  from .routes.app_blueprint import App_Blueprint 
 from .routes.auth_blueprint import auth_blueprint
@@ -28,6 +29,7 @@ def inicializar_app():
     
     app.register_blueprint(app_blueprint)
     app.register_blueprint(mensaje_blueprint)
+    app.register_blueprint(canal_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix = '/auth') #todas las rutas definidas en auth_blueprint estarán disponibles bajo el prefijo "/auth".
 
     return app

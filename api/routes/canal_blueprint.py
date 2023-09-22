@@ -1,12 +1,9 @@
 from flask import Blueprint
 from ..controllers.canal_controller import CanalesController
 
-app_blueprint = Blueprint('App_blueprint', __name__)
+canal_blueprint = Blueprint('canal_blueprint', __name__)
 
-
-#EJEMPLO DE ENDPOINTS CON GET, POST, PUT Y DELETE
-
-app_blueprint.route('/canales', methods=['GET'])(CanalesController.mostrar_todos_canales)
-app_blueprint.route('/canales/<int:canal_id>', methods=['GET'])(CanalesController.mostrar_canal)
-app_blueprint.route('/canales', methods=['POST'])(CanalesController.crear_canal)
-app_blueprint.route('/canales/<int:canal_id>', methods=['DELETE'])(CanalesController.eliminar_canal)
+canal_blueprint.route('/canales/<int:canal_id>', methods=['GET'])(CanalesController.mostrar_canal)
+canal_blueprint.route('/canales/servidor/<int:servidor_id>', methods=['GET'])(CanalesController.mostrar_canales_por_servidor)
+canal_blueprint.route('/canales', methods=['POST'])(CanalesController.crear_canal)
+canal_blueprint.route('/canales/<int:canal_id>', methods=['DELETE'])(CanalesController.eliminar_canal)
