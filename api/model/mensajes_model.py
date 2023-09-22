@@ -52,11 +52,12 @@ class Mensaje:
         try:
             result = DatabaseConnection.execute_query(query, params)
             if result:
+                last_row_id = result.lastrowid
                 return cls(
-                    id_mensaje=result.lastrowid,  # Obtener el ID del mensaje recién creado
+                    id_mensaje=last_row_id,  # Obtener el ID del mensaje recién creado
                     contenido=contenido,
-                    hora_mensaje=result[1],
-                    fecha_mensaje=result[2],
+                    hora_mensaje=None,  # La hora y fecha se establecerán automáticamente en la base de datos
+                    fecha_mensaje=None,
                     id_usuario=id_usuario,
                     id_canal=id_canal,
                 )
@@ -77,4 +78,5 @@ class Mensaje:
         except Error as e:
             print(f"Error al eliminar mensaje: {e}")
             return False
+
 
