@@ -60,7 +60,7 @@ class UserController:
             fecha_registro=None,
             estado_activo=data.get('estado_activo'),
             id_rol=data.get('id_rol'),
-            imagen=""
+            imagen=None,
         )
 
         if Usuario.create_usuario(new_user):
@@ -82,35 +82,89 @@ class UserController:
         else:
             return {"message": "Error al restablecer la contraseña"}, 500
         
-# Actualizar perfil del usuario
+# Modificar perfil de usuario
     @classmethod
     def update_profile(cls):
+        # Obtiene el alias del usuario actualmente autenticado
         alias = session.get('alias')
-        data = request.form  # Asume que los datos se envían como formulario
 
-        # Verifica si el alias existe en la sesión
+        # Verifica si el usuario está autenticado
         if not alias:
             return {"message": "Usuario no autenticado"}, 401
 
-        # Verifica si el alias pertenece al usuario autenticado
-        if alias != data.get('alias'):
-            return {"message": "No tienes permiso para editar este perfil"}, 403
+        # Obtiene los datos enviados en el cuerpo de la solicitud (JSON)
+        data = request.json
 
-        # Crea un objeto Usuario con los datos actualizados
-        updated_user = Usuario(
-            alias=alias,
-            nombre=data.get('nombre'),
-            apellido=data.get('apellido'),
-            fecha_nacimiento=data.get('fecha_nacimiento'),
-            password=data.get('password'),
-            correo_electronico=data.get('correo_electronico'),
-            fecha_registro=None,  # No deberías actualizar la fecha de registro
-            estado_activo=data.get('estado_activo'),
-            imagen=None,
-            id_rol=data.get('id_rol')
-        )
+        # Obtén el usuario actual de la base de datos
+        user = Usuario.get(Usuario(alias=alias))
 
-        if Usuario.update_usuario(updated_user):
+        # Verifica si el usuario existe
+        if not user:
+            return {"message": "Usuario no encontrado"}, 404
+
+        # Verifica si se proporciona un nuevo alias y si es diferente del alias actual
+        if "alias" in data and data["alias"] != alias:
+            # Verifica si el nuevo alias ya está en uso
+            if Usuario.is_alias_in_use(data["alias"]):
+                return {"message": "El alias ya está en uso"}, 400
+
+        # Actualiza los atributos del usuario con los nuevos valores si se proporcionaron
+        if "alias" in data:
+            user.alias = data["alias"]
+        if "nombre" in data:
+            user.nombre = data["nombre"]
+        if "apellido" in data:
+            user.apellido = data["apellido"]
+        if "fecha_nacimiento" in data:
+            user.fecha_nacimiento = data["fecha_nacimiento"]
+        if "password" in data:
+            user.password = data["password"]
+        if "correo_electronico" in data:
+            user.correo_electronico = data["correo_electronico"]
+        if "estado_activo" in data:
+            user.estado_activo = data["estado_activo"]
+        if "imagen" in data:
+            user.imagen = data["imagen"]
+        if "id_rol" in data:
+            user.id_rol = data["id_rol"]
+
+        # Guarda los cambios en la base de datos utilizando update_usuario
+        if Usuario.update_usuario(user):
             return {"message": "Perfil actualizado exitosamente"}, 200
         else:
-            return {"message": "Error al actualizar el perfil"}, 500
+            return {"message": "Error al actualizar perfil"}, 500
+
+        
+        
+# # Actualizar perfil del usuario
+#     @classmethod
+#     def update_profile(cls):
+#         alias = session.get('alias')
+#         data = request.form  # Asume que los datos se envían como formulario
+
+#         # Verifica si el alias existe en la sesión
+#         if not alias:
+#             return {"message": "Usuario no autenticado"}, 401
+
+#         # Verifica si el alias pertenece al usuario autenticado
+#         if alias != data.get('alias'):
+#             return {"message": "No tienes permiso para editar este perfil"}, 403
+
+#         # Crea un objeto Usuario con los datos actualizados
+#         updated_user = Usuario(
+#             alias=alias,
+#             nombre=data.get('nombre'),
+#             apellido=data.get('apellido'),
+#             fecha_nacimiento=data.get('fecha_nacimiento'),
+#             password=data.get('password'),
+#             correo_electronico=data.get('correo_electronico'),
+#             fecha_registro=None,  # No deberías actualizar la fecha de registro
+#             estado_activo=data.get('estado_activo'),
+#             imagen=None,
+#             id_rol=data.get('id_rol')
+#         )
+
+#         if Usuario.update_usuario(updated_user):
+#             return {"message": "Perfil actualizado exitosamente"}, 200
+#         else:
+#             return {"message": "Error al actualizar el perfil"}, 500

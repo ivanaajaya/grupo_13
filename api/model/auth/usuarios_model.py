@@ -18,7 +18,7 @@ class Usuario:
         self.correo_electronico = kwargs.get('correo_electronico')
         self.fecha_registro = kwargs.get('fecha_registro')
         self.estado_activo = kwargs.get('estado_activo', True)
-        self.imagen = kwargs.get('imagen', "")
+        self.imagen = kwargs.get('imagen', None)
         self.id_rol = kwargs.get('id_rol')
         
     def serialize(self):
@@ -132,18 +132,27 @@ class Usuario:
     def update_usuario(cls, usuario):
         """Modifica un usuario existente en la base de datos."""
 
-        # primero tendria que Validar que el Alias del usuario no esté en uso, PARA EL MANEJO DE ERROR
-
-        query = """UPDATE proyecto_db.usuario SET nombre = %(nombre)s, apellido = %(apellido)s, fecha_nacimiento = %(fecha_nacimiento)s, password = %(password)s, correo_electronico = %(correo_electronico)s, fecha_registro = %(fecha_registro)s, estado_activo = %(estado_activo)s, id_rol = %(id_rol)s
-        WHERE alias = %(alias)s"""
+        query = """UPDATE proyecto_db.Usuarios SET
+                alias = %(alias)s,
+                nombre = %(nombre)s,
+                apellido = %(apellido)s,
+                fecha_nacimiento = %(fecha_nacimiento)s,
+                password = %(password)s,
+                correo_electronico = %(correo_electronico)s,
+                estado_activo = %(estado_activo)s,
+                imagen = %(imagen)s,
+                id_rol = %(id_rol)s
+                WHERE id_usuario = %(id_usuario)s"""
+        
         params = usuario.__dict__
-        # Ejecuta la consulta de actualizacion
+        # Ejecuta la consulta de actualización
         result = DatabaseConnection.execute_query(query, params=params)
 
         if result:
             return True
         else:
             return False
+
 
 # elimina usuario
     @classmethod
