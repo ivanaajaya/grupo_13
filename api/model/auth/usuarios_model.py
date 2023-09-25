@@ -39,7 +39,7 @@ class Usuario:
             "fecha_registro": self.fecha_registro,
             "estado_activo": self.estado_activo,
             "imagen": self.imagen,
-            "rol": UserRoleModel.get(UserRoleModel(id_rol = self.id_rol)).serialize()
+            "rol": UserRoleModel.get(UserRoleModel(id_rol = self.id_rol)).serialize(),
         }
 
     @classmethod
@@ -104,7 +104,7 @@ class Usuario:
                 fecha_registro=result[7],
                 estado_activo=result[8],
                 imagen=result[9],
-                id_rol=result[10],
+                id_rol=result[10]
             )
         return None #usuario no encontrado
 
@@ -114,8 +114,8 @@ class Usuario:
         """ insertar un nuevo usuario en la base de datos"""
         # primero tendria que Validar que el Alias del usuario no esté en uso
 
-        query = """INSERT INTO proyecto_db.usuarios  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, fecha_registro, estado_activo, id_rol) 
-        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(fecha_registro)s, %(estado_activo)s, %(id_rol)s);"""
+        query = """INSERT INTO proyecto_db.usuarios  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, imagen, id_rol) 
+        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(estado_activo)s, %(imagen)s, %(id_rol)s);"""
 
         params = usuario.__dict__
 
@@ -127,6 +127,30 @@ class Usuario:
         else:
             return False
         
+# Verificar la contraseña actual del usuario
+    @classmethod
+    def check_current_password(cls, alias, Contraseña_actual):
+        """Verifica que la contraseña actual ingresada coincida con la contraseña almacenada en la base de datos."""
+
+        query = """
+        SELECT password FROM proyecto_db.usuarios
+        WHERE alias = %(alias)s
+        """
+
+        params = {'alias': alias}
+
+        # Obtiene la contraseña almacenada en la base de datos
+        contraseña_almacenada = DatabaseConnection.fetch_one(query, params=params)
+        # print("CONTRASEÑAAA", contraseña_almacenada)
+        # print("contrasseña actual", Contraseña_actual)
+        if contraseña_almacenada is not None and contraseña_almacenada[0] == Contraseña_actual:
+            # print("si")
+            return True
+        else:
+            # print("no")
+            return False
+        
+
 # Modifica usuario
     @classmethod
     def update_usuario(cls, usuario):
@@ -171,18 +195,25 @@ class Usuario:
         else:
             return False
     
-#actualizar contraseña
+# Actualizar contraseña por alias
     @classmethod
     def update_password(cls, alias, new_password):
-        """Actualiza la contraseña de un usuario en la base de datos."""
+        """Actualiza la contraseña de un usuario en la base de datos por alias."""
 
-        query = """UPDATE proyecto_db.usuarios SET password = %(new_password)s WHERE alias = %(alias)s"""
-        params = {'alias': alias, 'password': new_password}
+        query = """
+        UPDATE proyecto_db.usuarios
+        SET password = %(new_password)s
+        WHERE alias = %(alias)s
+        """
+
+        params = {'alias': alias, 'new_password': new_password}
 
         # Ejecuta la consulta de actualización de contraseña
         result = DatabaseConnection.execute_query(query, params=params)
 
         return result  # Devuelve el resultado de la actualización (True o False)
+
+
 
 #Listado con los servidores a los que el usuario pertenece
     @staticmethod

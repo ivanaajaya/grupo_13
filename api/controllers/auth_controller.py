@@ -40,7 +40,7 @@ class UserController:
     def register(cls):
         data = request.json
         alias = data.get('alias')
-        correo_electronico=data.get('correo_electronico')
+        correo_electronico = data.get('correo_electronico')
 
         # Verificar si el alias ya está en uso
         if Usuario.is_alias_in_use(alias):
@@ -49,6 +49,11 @@ class UserController:
         if Usuario.is_email_in_use(correo_electronico):
             return {"message": "Correo electrónico ya está en uso"}, 400
 
+        # Verificar que los campos obligatorios no estén vacíos
+        if not (alias and correo_electronico and data.get('nombre') and data.get('apellido')
+                and data.get('password')):
+            return {"message": "Los campos obligatorios deben completarse: alias, correo electrónico, nombre, apellido y password."}, 400
+
         # Crear el nuevo usuario
         new_user = Usuario(
             alias=alias,
@@ -56,60 +61,77 @@ class UserController:
             apellido=data.get('apellido'),
             fecha_nacimiento=data.get('fecha_nacimiento'),
             password=data.get('password'),
-            correo_electronico= correo_electronico,
-            fecha_registro=None,
-            estado_activo=data.get('estado_activo'),
+            correo_electronico=correo_electronico,
+            estado_activo= True,
+            imagen= None,
             id_rol=data.get('id_rol'),
-            imagen=None,
         )
 
         if Usuario.create_usuario(new_user):
             return {"message": "Usuario registrado exitosamente"}, 200
         else:
-            return {"message": "Error al registrar usuario"}, 500  
-        
-# Restablece la contraseña
+            return {"message": "Error al registrar usuario"}, 500
+ 
+# Restablecer la contraseña por alias
     @classmethod
-    def reset_password(cls, alias, new_password):
-        """Restablece la contraseña de un usuario existente."""
+    def reset_password(cls):
+        # Obtener los datos del formulario de cambio de contraseña
+        data = request.json
+        password = data.get('password')
+        new_password = data.get('newPassword')
 
-        # Verificar si el alias existe en la base de datos
-        if not Usuario.is_alias_in_use(alias):
-            return {"message": "Alias no encontrado"}, 404
+        # Verificar que se haya proporcionado una nueva contraseña válida
+        if not new_password:
+            return {"message": "Nueva contraseña no válida"}, 400
 
+        # Obtener el alias del usuario actualmente autenticado (si existe)
+        alias = session.get('alias')
+        # print("VEEEEER", alias)
+
+        # Verificar si el usuario está autenticado
+        if not alias:
+            return {"message": "Usuario no autenticado"}, 401
+
+        # Verificar que la contraseña actual sea correcta utilizando check_current_password
+        if not Usuario.check_current_password(alias, password):
+            return {"message": "Contraseña actual incorrecta"}, 401
+
+        # Actualizar la contraseña del usuario en la base de datos
         if Usuario.update_password(alias, new_password):
-            return {"message": "Contraseña restablecida exitosamente"}, 200
+            return {"message": "Contraseña actualizada exitosamente"}, 200
         else:
-            return {"message": "Error al restablecer la contraseña"}, 500
+            return {"message": "Error al actualizar la contraseña"}, 500
         
-# Modificar perfil de usuario
+# Modificar perfil de usuario- un uso por cada logeo
     @classmethod
     def update_profile(cls):
+        """"""
         # Obtiene el alias del usuario actualmente autenticado
         alias = session.get('alias')
-
-        # Verifica si el usuario está autenticado
+        print("--------------USUARIOOOO------alias--: ", alias)
+        #Verifica si el usuario está autenticado
         if not alias:
+            print("--------------USUARIOOOO------not id_usuario:--: ", alias)
             return {"message": "Usuario no autenticado"}, 401
 
         # Obtiene los datos enviados en el cuerpo de la solicitud (JSON)
         data = request.json
+        print("-------data-----data----:", data)
 
         # Obtén el usuario actual de la base de datos
         user = Usuario.get(Usuario(alias=alias))
-
+        print("---------usuario-----user--- :", user)
         # Verifica si el usuario existe
         if not user:
             return {"message": "Usuario no encontrado"}, 404
 
-        # Verifica si se proporciona un nuevo alias y si es diferente del alias actual
-        if "alias" in data and data["alias"] != alias:
-            # Verifica si el nuevo alias ya está en uso
-            if Usuario.is_alias_in_use(data["alias"]):
-                return {"message": "El alias ya está en uso"}, 400
-
+        # # Verifica si se proporciona un nuevo alias y si es diferente del alias actual
+        # if "alias" in data and data["alias"] != alias:
+            
         # Actualiza los atributos del usuario con los nuevos valores si se proporcionaron
         if "alias" in data:
+            if Usuario.is_alias_in_use(data["alias"]): # Verifica si el nuevo alias ya está en uso
+                return {"message": "El alias ya está en uso"}, 400
             user.alias = data["alias"]
         if "nombre" in data:
             user.nombre = data["nombre"]
@@ -120,6 +142,8 @@ class UserController:
         if "password" in data:
             user.password = data["password"]
         if "correo_electronico" in data:
+            if Usuario.is_email_in_use(data["correo_electronico"]):
+                return {"message": "El correo electronico ya está en uso"}, 400
             user.correo_electronico = data["correo_electronico"]
         if "estado_activo" in data:
             user.estado_activo = data["estado_activo"]
@@ -133,38 +157,3 @@ class UserController:
             return {"message": "Perfil actualizado exitosamente"}, 200
         else:
             return {"message": "Error al actualizar perfil"}, 500
-
-        
-        
-# # Actualizar perfil del usuario
-#     @classmethod
-#     def update_profile(cls):
-#         alias = session.get('alias')
-#         data = request.form  # Asume que los datos se envían como formulario
-
-#         # Verifica si el alias existe en la sesión
-#         if not alias:
-#             return {"message": "Usuario no autenticado"}, 401
-
-#         # Verifica si el alias pertenece al usuario autenticado
-#         if alias != data.get('alias'):
-#             return {"message": "No tienes permiso para editar este perfil"}, 403
-
-#         # Crea un objeto Usuario con los datos actualizados
-#         updated_user = Usuario(
-#             alias=alias,
-#             nombre=data.get('nombre'),
-#             apellido=data.get('apellido'),
-#             fecha_nacimiento=data.get('fecha_nacimiento'),
-#             password=data.get('password'),
-#             correo_electronico=data.get('correo_electronico'),
-#             fecha_registro=None,  # No deberías actualizar la fecha de registro
-#             estado_activo=data.get('estado_activo'),
-#             imagen=None,
-#             id_rol=data.get('id_rol')
-#         )
-
-#         if Usuario.update_usuario(updated_user):
-#             return {"message": "Perfil actualizado exitosamente"}, 200
-#         else:
-#             return {"message": "Error al actualizar el perfil"}, 500
