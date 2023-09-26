@@ -164,10 +164,9 @@ class Usuario:
                 password = %(password)s,
                 correo_electronico = %(correo_electronico)s,
                 estado_activo = %(estado_activo)s,
-                imagen = %(imagen)s,
-                id_rol = %(id_rol)s
+                imagen = %(imagen)s
                 WHERE id_usuario = %(id_usuario)s"""
-        
+        # id_rol = %(id_rol)s
         params = usuario.__dict__
         # Ejecuta la consulta de actualización
         result = DatabaseConnection.execute_query(query, params=params)
@@ -178,22 +177,22 @@ class Usuario:
             return False
 
 
-# elimina usuario
-    @classmethod
-    def delete_usuario(cls, id_usuario):
-        """Elimina un usuario existente en la base de datos."""
+# # elimina usuario
+#     @classmethod
+#     def delete_usuario(cls, id_usuario):
+#         """Elimina un usuario existente en la base de datos."""
 
-        # primero tendria que Validar que el usuario exista, PARA EL MANEJO DE ERROR
-        query = "DELETE FROM proyecto_db.usuarios WHERE id_usuario = %s"
-        params = (id_usuario,)
+#         # primero tendria que Validar que el usuario exista, PARA EL MANEJO DE ERROR
+#         query = "DELETE FROM proyecto_db.usuarios WHERE id_usuario = %s"
+#         params = (id_usuario,)
 
-        # Ejecuta la consulta de eliminación
-        result = DatabaseConnection.execute_query(query, params)
+#         # Ejecuta la consulta de eliminación
+#         result = DatabaseConnection.execute_query(query, params)
 
-        if result:
-            return True
-        else:
-            return False
+#         if result:
+#             return True
+#         else:
+#             return False
     
 # Actualizar contraseña por alias
     @classmethod

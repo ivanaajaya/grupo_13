@@ -1,7 +1,7 @@
 from ..model.auth.usuarios_model import Usuario
 
 from flask import request, session
-
+import os
 class UserController:
 
 # acceso
@@ -108,19 +108,23 @@ class UserController:
         """"""
         # Obtiene el alias del usuario actualmente autenticado
         alias = session.get('alias')
-        print("--------------USUARIOOOO------alias--: ", alias)
+        # print("--------------USUARIOOOO------alias--: ", alias)
         #Verifica si el usuario está autenticado
         if not alias:
-            print("--------------USUARIOOOO------not id_usuario:--: ", alias)
+            # print("--------------USUARIOOOO------not id_usuario:--: ", alias)
             return {"message": "Usuario no autenticado"}, 401
 
         # Obtiene los datos enviados en el cuerpo de la solicitud (JSON)
         data = request.json
-        print("-------data-----data----:", data)
+        # print("-------data-----data----:", data)
 
         # Obtén el usuario actual de la base de datos
         user = Usuario.get(Usuario(alias=alias))
-        print("---------usuario-----user--- :", user)
+        # print("---------usuario-----user--- :", user)
+        # print("---tipo de dato user.", type(user.alias))
+        # print("---tipo de dato data.", type(data["alias"]))
+        # print("---contenido user.---------", user.alias)
+        # print("---contenido data.", data["alias"])
         # Verifica si el usuario existe
         if not user:
             return {"message": "Usuario no encontrado"}, 404
@@ -129,28 +133,56 @@ class UserController:
         # if "alias" in data and data["alias"] != alias:
             
         # Actualiza los atributos del usuario con los nuevos valores si se proporcionaron
-        if "alias" in data:
+        if data["alias"] == "":
+            user.alias =user.alias
+        else:
             if Usuario.is_alias_in_use(data["alias"]): # Verifica si el nuevo alias ya está en uso
                 return {"message": "El alias ya está en uso"}, 400
             user.alias = data["alias"]
-        if "nombre" in data:
+            
+        if data["nombre"] == "":
+            user.nombre =user.nombre
+        else:
             user.nombre = data["nombre"]
-        if "apellido" in data:
+            
+        if data["apellido"] == "":
+            user.apellido=user.apellido
+        else:
             user.apellido = data["apellido"]
-        if "fecha_nacimiento" in data:
+            
+        if data["fecha_nacimiento"] == "":
+            user.fecha_nacimiento=user.fecha_nacimiento
+        else:
             user.fecha_nacimiento = data["fecha_nacimiento"]
-        if "password" in data:
+            
+        if data["password"] == "":
+            user.password =user.password
+        else:
             user.password = data["password"]
-        if "correo_electronico" in data:
+            
+        if data["correo_electronico"] == "":
+            user.correo_electronico=user.correo_electronico
+        else:
             if Usuario.is_email_in_use(data["correo_electronico"]):
                 return {"message": "El correo electronico ya está en uso"}, 400
             user.correo_electronico = data["correo_electronico"]
-        if "estado_activo" in data:
+            
+        if data["estado_activo"] == "":
+            user.estado_activo=user.estado_activo
+        else:
             user.estado_activo = data["estado_activo"]
-        if "imagen" in data:
-            user.imagen = data["imagen"]
-        if "id_rol" in data:
-            user.id_rol = data["id_rol"]
+            
+        if data["imagen"] == user.imagen and data["imagen"] != "":
+            user.imagen=user.imagen
+        else:
+            nombre_archivo = os.path.basename(data["imagen"])
+            rutaassets= "../assets/"
+            user.imagen = rutaassets+ nombre_archivo
+            
+        # if "id_rol" not in data: 
+        #     user.id_rol=user.id_rol
+        # else:
+        #     user.id_rol = data["id_rol"]
 
         # Guarda los cambios en la base de datos utilizando update_usuario
         if Usuario.update_usuario(user):
