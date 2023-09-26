@@ -15,7 +15,7 @@ class CanalesController:
                 return {"mensaje": "Canal no encontrado"}, 404
         except Exception as e:
             print("Error en mostrar_canal:", e)
-            return {"mensaje": "Hubo un error en el servidor"}, 500
+            return {"mensaje": "Hubo un error en el canal"}, 500
 
     @classmethod
     def mostrar_canales_por_servidor(cls, servidor_id):
