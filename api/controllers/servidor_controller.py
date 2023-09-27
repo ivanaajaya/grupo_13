@@ -1,5 +1,6 @@
 from ..model.servidores_model import Servidor
-from flask import request, jsonify
+from ..model.auth.usuarios_model import Usuario
+from flask import request, jsonify, session
 
 class ServidoresController:
 
@@ -31,12 +32,14 @@ class ServidoresController:
     def crear_servidor(cls):
         try:
             data = request.json
+            alias = session.get('alias')
+            user = Usuario.get(Usuario(alias=alias))
 
             servidor = Servidor(
                 nombre_servidor=data.get('nombre_servidor', ''),
                 fecha_creacion=data.get('fecha_creacion', ''),
                 descripcion=data.get('descripcion', ''),
-                id_usuario=data.get('id_usuario', None)
+                id_usuario=user.id_usuario
             )
 
             created_server = Servidor.crear_servidor(
