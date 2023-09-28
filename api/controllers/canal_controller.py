@@ -31,21 +31,12 @@ class CanalesController:
     def crear_canal(cls):
         try:
             data = request.json
-
-            canal = Canal(
-                nombre_canal=data.get('nombre_canal', ''),
-                id_rol=data.get('id_rol', None),
-                id_servidor=data.get('id_servidor', None)
-            )
-
-            created_channel = Canal.crear_canal(
-                canal.nombre_canal,
-                canal.id_rol,
-                canal.id_servidor
-            )
-
+            nombre_canal=data.get('nombre_canal', ''),
+            id_servidor=int(data.get('id_servidor'))#servidor_id lo obtiene como un string
+            created_channel =Canal.crear_canal(nombre_canal, id_servidor)
+            print (created_channel)
             if created_channel:
-                return {'message': 'Canal creado con éxito'}, 201
+                return {'message': 'Canal creado con éxito'}, 200
             else:
                 return {'message': 'No se pudo crear el canal'}, 500
         except Exception as e:

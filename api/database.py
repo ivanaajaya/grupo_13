@@ -52,6 +52,33 @@ class DatabaseConnection:
             cls._connection.close()
             cls._connection = None
 
+    # @classmethod
+    # def insert_data(cls, query, params):
+    #     conn = cls.get_connection()
+    #     cursor = conn.cursor()
+    #     try:
+    #         cursor.execute(query, params)
+    #         conn.commit()
+    #         print("Datos insertados correctamente.")
+    #     except Error as err:
+    #         print("Error al insertar datos:", err)
+    #     finally:
+    #         cursor.close()
+
+    # @classmethod
+    # def obtener_ultimoservidor(cls):
+    #     try:
+    #         conn = cls.get_connection()
+    #         cursor = conn.cursor()
+    #         cursor.execute("SELECT id_servidor FROM proyecto_db.Servidores ORDER BY id_servidor DESC LIMIT 1")
+    #         last_server = cursor.fetchone()
+    #         if last_server:
+    #             return last_server[0]
+    #         else:
+    #             return None
+    #     except Exception as e:
+    #         print("Error al obtener el último servidor:", e)
+    #         return None
             
     # @classmethod
     # def insert_data(cls, query, database_name=None, params=None):

@@ -4,36 +4,62 @@ from mysql.connector import Error
 class Servidor:
     """Modelo de Servidor"""
 
-    def __init__(self, id_servidor=None, nombre_servidor=None, fecha_creacion=None, descripcion=None, id_usuario=None):
+    def __init__(self, id_servidor=None, nombre_servidor=None, descripcion=None, cantUser=None):
         self.id_servidor = id_servidor
         self.nombre_servidor = nombre_servidor
-        self.fecha_creacion = fecha_creacion
         self.descripcion = descripcion
-        self.id_usuario = id_usuario
+        self.cantUser = cantUser
 
     def serialize(self):
         return {
             "id_servidor": self.id_servidor,
             "nombre_servidor": self.nombre_servidor,
-            "fecha_creacion": self.fecha_creacion,
             "descripcion": self.descripcion,
-            "id_usuario": self.id_usuario,
+            "cantUser": self.cantUser
         }
 
+    # @classmethod
+    # def obtener_servidor_por_id(cls, id_servidor):
+    #     print("entro obtener_servidor_por_id",id_servidor)
+    #     try:
+    #         query = """SELECT * FROM Servidores WHERE id_servidor = %s"""
+    #         params = (id_servidor,)
+            
+    #         servidor = DatabaseConnection.fetch_one(query,params=params)
+    #         print("datos obtenidos del servidor",servidor)
+    #         if servidor:
+                
+    #             return Servidor(servidor[0], servidor[1], servidor[2])
+    #         return None
+    #     except Exception as e:
+    #         print("Error en obtener_servidor_por_id:", e)
+    #         return None
     @classmethod
-    def obtener_servidor_por_id(cls, servidor_id):
-        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores WHERE id_servidor = %s"
-        params = (servidor_id,)
-        result = DatabaseConnection.fetch_one(query, params)
-
-        if result:
-            return cls(*result)
-        else:
-            return None
+    def obtener_servidores_de_usuario(cls, id_usuario):
+        try:
+            query = """
+                SELECT s.id_servidor, s.nombre_servidor, s.descripcion, s.cantUser
+                FROM Servidores s
+                INNER JOIN UsuarioServidor us ON s.id_servidor = us.id_servidor
+                WHERE us.id_usuario = %s;
+            """
+            params = (id_usuario,)
+            
+            results = DatabaseConnection.fetch_all(query, params)
+            
+            servidores = []
+            for row in results:
+                servidor = cls(*row)
+                servidores.append(servidor)
+            
+            return servidores
+        except Exception as e:
+            print("Error en obtener_servidores_de_usuario:", e)
+            return []
 
     @classmethod
     def obtener_todos_servidores(cls):
-        query = "SELECT id_servidor, nombre_servidor, fecha_creacion, descripcion, id_usuario FROM servidores;"
+        query = "SELECT * FROM servidores;"
         results = DatabaseConnection.fetch_all(query)
 
         servidores = []
@@ -43,25 +69,46 @@ class Servidor:
         return servidores
 
     @classmethod
-    def crear_servidor(cls, nombre_servidor, fecha_creacion, descripcion, id_usuario):
-        query = "INSERT INTO servidores (nombre_servidor, fecha_creacion, descripcion, id_usuario) VALUES (%s, %s, %s, %s);"
-        params = (nombre_servidor, fecha_creacion, descripcion, id_usuario)
-
+    def insert_servidor_query(cls, nombre_servidor, descripcion):
+        """Esta función se encarga de ejecutar la consulta SQL para insertar un nuevo servidor en la tabla Servidores."""
         try:
-            result = DatabaseConnection.execute_query(query, params)
-            if result:
-                return cls(
-                    id_servidor=result.lastrowid,  # Obtener el ID del servidor recién creado
-                    nombre_servidor=nombre_servidor,
-                    fecha_creacion=fecha_creacion,
-                    descripcion=descripcion,
-                    id_usuario=id_usuario,
-                )
-            else:
-                return None
-        except Error as e:
-            print(f"Error al crear servidor: {e}")
-            return None
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            query = """
+            INSERT INTO Servidores (nombre_servidor, descripcion, cantUser)
+            VALUES (%s, %s, 1)
+        """  # Agrega un valor predeterminado para cantUser  # Empezamos con 1 usuario (el administrador)
+            params = (nombre_servidor, descripcion)
+            cursor.execute(query, params)
+            servidor_id = cursor.lastrowid  # Obtenemos el ID del servidor recién insertado
+            print("altimo ID---------",servidor_id)
+            return servidor_id
+        except Exception as e:
+            print("Error en crear_servidor:", e)
+            return False
+        
+    @classmethod
+    def servidor_existe(cls, servidor_id):
+        """para verificar si un servidor existe"""
+        try:
+            # conn = DatabaseConnection.get_connection()
+            # cursor = conn.cursor()
+            query = """
+            SELECT id_servidor FROM Servidores
+            WHERE id_servidor = %s
+            """
+            params = (servidor_id,)
+            # cursor.execute(query, params)
+            result = DatabaseConnection.fetch_one(query, params)
+            print("paso por el servidor_existe....", bool(result))
+            return bool(result)  # Devuelve True si se encuentra el servidor, False si no
+        except Exception as e:
+            print("Error en servidor_existe:", e)
+            return False
+        # finally:
+        #     cursor.close()
+        #     conn.close()
+        
 
     @classmethod
     def eliminar_servidor(cls, id_servidor):
@@ -95,3 +142,19 @@ class Servidor:
                 cursor.close()
 
 
+    @classmethod
+    def obtener_servidor_por_id(cls, id_servidor):
+        try:
+            query = "SELECT * FROM Servidores WHERE id_servidor = %s"
+            params = (id_servidor)
+            
+            servidor = DatabaseConnection.fetch_one(query,params)
+            print("datos obtenidos del servidor",servidor)
+            if servidor:
+                return Servidor(servidor[0], servidor[1], servidor[2])
+            return None
+        except Exception as e:
+            print("Error en obtener_servidor_por_id:", e)
+            return None
+    
+    

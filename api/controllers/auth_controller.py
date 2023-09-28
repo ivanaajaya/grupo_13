@@ -12,9 +12,14 @@ class UserController:
             alias = data.get('alias'),
             password = data.get('password')
         )
+        alias = data.get('alias')
+        usuario = Usuario.get(Usuario(alias=alias))
+        id_usuario = usuario.id_usuario
         
         if Usuario.is_registered(user):
             session['alias'] = data.get('alias')
+            session['id_usuario'] = id_usuario
+            
             return {"message": "Sesion iniciada"}, 200
         else:
             return {"message": "Usuario o contraseña incorrectos"}, 401
@@ -64,8 +69,9 @@ class UserController:
             correo_electronico=correo_electronico,
             estado_activo= True,
             imagen= None,
-            id_rol=data.get('id_rol'),
+            
         )
+# id_rol=data.get('id_rol'),
 
         if Usuario.create_usuario(new_user):
             return {"message": "Usuario registrado exitosamente"}, 200

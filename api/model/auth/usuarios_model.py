@@ -1,5 +1,5 @@
 from ...database import DatabaseConnection
-from .usuario_roles_model import UserRoleModel
+# from .usuario_roles_model import UserRoleModel
 # from passlib.hash import sha256_crypt
 
 class Usuario:
@@ -19,7 +19,7 @@ class Usuario:
         self.fecha_registro = kwargs.get('fecha_registro')
         self.estado_activo = kwargs.get('estado_activo', True)
         self.imagen = kwargs.get('imagen', None)
-        self.id_rol = kwargs.get('id_rol')
+        # self.id_rol = kwargs.get('id_rol')
         
     def serialize(self):
         """Convierte la instancia de la clase en un diccionario.
@@ -39,7 +39,7 @@ class Usuario:
             "fecha_registro": self.fecha_registro,
             "estado_activo": self.estado_activo,
             "imagen": self.imagen,
-            "rol": UserRoleModel.get(UserRoleModel(id_rol = self.id_rol)).serialize(),
+            # "rol": UserRoleModel.get(UserRoleModel(id_rol = self.id_rol)).serialize(),
         }
 
     @classmethod
@@ -103,19 +103,19 @@ class Usuario:
                 correo_electronico=result[6],
                 fecha_registro=result[7],
                 estado_activo=result[8],
-                imagen=result[9],
-                id_rol=result[10]
+                imagen=result[9]
             )
         return None #usuario no encontrado
-
+# ,
+#                 id_rol=result[10]
 # Registrar un usuario
     @classmethod
     def create_usuario(cls, usuario):
         """ insertar un nuevo usuario en la base de datos"""
         # primero tendria que Validar que el Alias del usuario no esté en uso
 
-        query = """INSERT INTO proyecto_db.usuarios  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, imagen, id_rol) 
-        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(estado_activo)s, %(imagen)s, %(id_rol)s);"""
+        query = """INSERT INTO proyecto_db.usuarios  (alias, nombre, apellido, fecha_nacimiento, password, correo_electronico, estado_activo, imagen) 
+        VALUES (%(alias)s, %(nombre)s, %(apellido)s, %(fecha_nacimiento)s, %(password)s, %(correo_electronico)s, %(estado_activo)s, %(imagen)s);"""
 
         params = usuario.__dict__
 
@@ -126,7 +126,8 @@ class Usuario:
             return True
         else:
             return False
-        
+# , id_rol    , %(id_rol)s
+    
 # Verificar la contraseña actual del usuario
     @classmethod
     def check_current_password(cls, alias, Contraseña_actual):
@@ -212,17 +213,3 @@ class Usuario:
 
         return result  # Devuelve el resultado de la actualización (True o False)
 
-
-
-#Listado con los servidores a los que el usuario pertenece
-    @staticmethod
-    def obtener_servidores_del_usuario(id_usuario):
-
-        query = "SELECT servidor_id FROM proyecto_db.servidores WHERE id_usuario = %s"
-        params = (id_usuario,)
-        result = DatabaseConnection.fetch_all(query, params=params)
-        servidores = [row[0] for row in result] #lista de servidores
-        if len(servidores)==0:
-            return None
-        else:
-            return servidores
