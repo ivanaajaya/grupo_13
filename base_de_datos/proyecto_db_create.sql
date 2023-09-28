@@ -24,7 +24,7 @@ CREATE TABLE Servidores (
 
 CREATE TABLE UsuarioServidor (
     id_UsuarioServidor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_rol VARCHAR(50) NOT NULL UNIQUE,
+    nombre_rol VARCHAR(50) NOT NULL,
     fecha_unirse TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_usuario INT,
     id_servidor INT,

@@ -13,10 +13,10 @@ INSERT INTO Servidores (nombre_servidor, descripcion, cantUser) VALUES
 
 -- Insertar datos en la tabla UsuarioServidor
 INSERT INTO UsuarioServidor (nombre_rol, id_usuario, id_servidor) VALUES
-    ('Rol1', 1, 1),
-    ('Rol2', 2, 1),
-    ('Rol3', 1, 2),
-    ('Rol4', 3, 2);
+    ('Administrador', 1, 1),
+    ('Administrador', 2, 1),
+    ('Administrador', 1, 2),
+    ('Administrador', 3, 2);
 
 -- Insertar datos en la tabla canales
 INSERT INTO canales (nombre_canal, id_servidor) VALUES
