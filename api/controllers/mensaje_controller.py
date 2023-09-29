@@ -1,6 +1,5 @@
 from ..model.mensajes_model import Mensaje
 from flask import request, jsonify
-
 class MensajesController:
 
     @classmethod
@@ -26,7 +25,7 @@ class MensajesController:
             # Si no hay mensajes en el canal, devolver un mensaje
             if not mensajes:
                 return {"mensaje": "No hay mensajes en este canal"}, 200
-            
+            print(mensajes)
             # Serializar los mensajes y devolver la respuesta
             mensajes_serializados = [mensaje.serialize() for mensaje in mensajes]
             print("lo que retorna",mensajes_serializados)
@@ -48,35 +47,48 @@ class MensajesController:
             print("Error en mostrar_mensajes_por_canal:", e)
             return {"mensaje": "Hubo un error en el servidor"}, 500
 
+    # @classmethod
+    # def crear_mensaje(cls):
+    #     try:
+    #         data = request.json
+
+    #         mensaje = Mensaje(
+    #             contenido=data.get('contenido', ''),
+    #             id_usuario=data.get('id_usuario', None),
+    #             id_canal=data.get('id_canal', None)
+    #         )
+
+    #         created_message = Mensaje.crear_mensaje(
+    #             mensaje.contenido,
+    #             mensaje.id_usuario,
+    #             mensaje.id_canal
+    #         )
+
+    #         if created_message:
+    #             return {'message': 'Mensaje creado con éxito'}, 201
+    #         else:
+    #             return {'message': 'No se pudo crear el mensaje'}, 500
+    #     except Exception as e:
+    #         print("Error en crear_mensaje:", e)
+    #         return {'message': 'Hubo un error en el servidor'}, 500
+
     @classmethod
-    def crear_mensaje(cls):
-        try:
-            data = request.json
-
-            mensaje = Mensaje(
-                contenido=data.get('contenido', ''),
-                hora_mensaje=data.get('hora_mensaje', ''),
-                fecha_mensaje=data.get('fecha_mensaje', ''),
-                id_usuario=data.get('id_usuario', None),
-                id_canal=data.get('id_canal', None)
-            )
-
-            created_message = Mensaje.crear_mensaje(
-                mensaje.contenido,
-                mensaje.hora_mensaje,
-                mensaje.fecha_mensaje,
-                mensaje.id_usuario,
-                mensaje.id_canal
-            )
-
-            if created_message:
-                return {'message': 'Mensaje creado con éxito'}, 201
-            else:
-                return {'message': 'No se pudo crear el mensaje'}, 500
-        except Exception as e:
-            print("Error en crear_mensaje:", e)
-            return {'message': 'Hubo un error en el servidor'}, 500
-
+    def enviar_mensaje(cls):
+        print("enviar_mensaje")
+        data = request.json
+        contenido = data.get('contenido')
+        print("enviar_mensaje",contenido)
+        id_usuario = data.get('id_usuario')
+        print("enviar_mensaje", id_usuario)
+        id_canal=data.get('id_canal')
+        print("enviar_mensaje",id_canal)
+        resul=Mensaje.crear_mensaje(contenido,id_usuario,id_canal)
+        print(resul)
+        if resul:
+            return jsonify({'message': 'Mensaje enviado con éxito'}),200
+        else:
+            return jsonify({'message': 'Error al enviar el mensaje'}),500
+    
     @classmethod
     def eliminar_mensaje(cls, mensaje_id):
         try:

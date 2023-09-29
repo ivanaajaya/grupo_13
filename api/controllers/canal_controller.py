@@ -1,4 +1,5 @@
 from ..model.canales_model import Canal
+from ..model.mensajes_model import Mensaje
 from flask import request, jsonify
 
 class CanalesController:

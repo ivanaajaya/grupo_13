@@ -44,8 +44,7 @@ CREATE TABLE canales (
 CREATE TABLE mensajes (
     id_mensaje INT NOT NULL AUTO_INCREMENT,
     contenido VARCHAR(170) NOT NULL,
-    hora_mensaje TIME,
-    fecha_mensaje DATE,
+    fecha_mensaje TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_usuario INT,
     id_canal INT,
     PRIMARY KEY (id_mensaje),

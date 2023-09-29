@@ -4,10 +4,9 @@ from mysql.connector import Error
 class Mensaje:
     """Modelo de Mensaje"""
 
-    def __init__(self, id_mensaje=None, contenido=None, hora_mensaje=None, fecha_mensaje=None, id_usuario=None, id_canal=None):
+    def __init__(self, id_mensaje=None, contenido=None, fecha_mensaje=None, id_usuario=None, id_canal=None):
         self.id_mensaje = id_mensaje
         self.contenido = contenido
-        self.hora_mensaje = hora_mensaje
         self.fecha_mensaje = fecha_mensaje
         self.id_usuario = id_usuario
         self.id_canal = id_canal
@@ -16,7 +15,6 @@ class Mensaje:
         return {
             "id_mensaje": self.id_mensaje,
             "contenido": self.contenido,
-            "hora_mensaje": str(self.hora_mensaje),
             "fecha_mensaje": str(self.fecha_mensaje),
             "id_usuario": self.id_usuario,
             "id_canal": self.id_canal,
@@ -24,7 +22,7 @@ class Mensaje:
 
     @classmethod
     def obtener_mensaje_por_id(cls, mensaje_id):
-        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM mensajes WHERE id_mensaje = %s"
+        query = "SELECT id_mensaje, contenido, fecha_mensaje, id_usuario, id_canal FROM mensajes WHERE id_mensaje = %s"
         params = (mensaje_id,)
         result = DatabaseConnection.fetch_one(query, params)
 
@@ -35,7 +33,7 @@ class Mensaje:
 
     @classmethod
     def obtener_mensajes_por_canal(cls, canal_id):
-        query = "SELECT id_mensaje, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal FROM mensajes WHERE id_canal = %s"
+        query = "SELECT id_mensaje, contenido, fecha_mensaje, id_usuario, id_canal FROM mensajes WHERE id_canal = %s"
         params = (canal_id,)
         results = DatabaseConnection.fetch_all(query, params)
 
@@ -49,12 +47,13 @@ class Mensaje:
     def obtener_mensajes_de_canal(cls, canal_id):
         try:
             query = """
-                SELECT m.id_mensaje, m.contenido, m.hora_mensaje, m.fecha_mensaje,
-                    m.id_usuario, u.alias as nombre_usuario
+                
+                SELECT m.contenido, m.fecha_mensaje, u.alias, m.id_canal, m.id_usuario
                 FROM mensajes m
                 INNER JOIN Usuarios u ON m.id_usuario = u.id_usuario
                 WHERE m.id_canal = %s
-                ORDER BY m.fecha_mensaje ASC, m.hora_mensaje ASC;
+                ORDER BY m.fecha_mensaje ASC;
+
             """
             params = (canal_id,)
             
@@ -72,26 +71,17 @@ class Mensaje:
 
 
     @classmethod
-    def crear_mensaje(cls, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal):
-        query = "INSERT INTO mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal) VALUES (%s, %s, %s, %s, %s);"
-        params = (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal)
-
+    def crear_mensaje(cls, contenido, id_usuario, id_canal):
         try:
+            query = "INSERT INTO mensajes (contenido, id_usuario, id_canal) VALUES ( %s, %s, %s);"
+            params = (contenido, id_usuario, id_canal)
             result = DatabaseConnection.execute_query(query, params)
             if result:
-                return cls(
-                    id_mensaje=result.lastrowid,
-                    contenido=contenido,
-                    hora_mensaje=hora_mensaje,
-                    fecha_mensaje=fecha_mensaje,
-                    id_usuario=id_usuario,
-                    id_canal=id_canal,
-                )
-            else:
-                return None
+                print("resultado de admin_query.-----------",result)
+                return True
         except Error as e:
             print(f"Error al crear mensaje: {e}")
-            return None
+            return False
 
     @classmethod
     def eliminar_mensaje(cls, mensaje_id):

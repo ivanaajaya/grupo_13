@@ -1,5 +1,5 @@
 from ...database import DatabaseConnection
-# from .usuario_roles_model import UserRoleModel
+
 # from passlib.hash import sha256_crypt
 
 class Usuario:
@@ -19,7 +19,7 @@ class Usuario:
         self.fecha_registro = kwargs.get('fecha_registro')
         self.estado_activo = kwargs.get('estado_activo', True)
         self.imagen = kwargs.get('imagen', None)
-        # self.id_rol = kwargs.get('id_rol')
+
         
     def serialize(self):
         """Convierte la instancia de la clase en un diccionario.
@@ -39,7 +39,6 @@ class Usuario:
             "fecha_registro": self.fecha_registro,
             "estado_activo": self.estado_activo,
             "imagen": self.imagen,
-            # "rol": UserRoleModel.get(UserRoleModel(id_rol = self.id_rol)).serialize(),
         }
 
     @classmethod
@@ -167,7 +166,7 @@ class Usuario:
                 estado_activo = %(estado_activo)s,
                 imagen = %(imagen)s
                 WHERE id_usuario = %(id_usuario)s"""
-        # id_rol = %(id_rol)s
+
         params = usuario.__dict__
         # Ejecuta la consulta de actualización
         result = DatabaseConnection.execute_query(query, params=params)
