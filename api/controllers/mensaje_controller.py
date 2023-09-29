@@ -18,6 +18,27 @@ class MensajesController:
             return {"mensaje": "Hubo un error en el servidor"}, 500
 
     @classmethod
+    def mostrar_mensajes_de_canal(cls, canal_id):
+        try:
+            # Consultar los mensajes del canal junto con la información del usuario
+            mensajes = Mensaje.obtener_mensajes_de_canal(canal_id)
+            
+            # Si no hay mensajes en el canal, devolver un mensaje
+            if not mensajes:
+                return {"mensaje": "No hay mensajes en este canal"}, 200
+            
+            # Serializar los mensajes y devolver la respuesta
+            mensajes_serializados = [mensaje.serialize() for mensaje in mensajes]
+            print("lo que retorna",mensajes_serializados)
+            
+            return jsonify(mensajes_serializados), 200
+        except Exception as e:
+            print("Error en mostrar_mensajes_de_canal:", e)
+            return {"mensaje": "Hubo un error en el servidor"}, 500
+
+    
+    
+    @classmethod
     def mostrar_mensajes_por_canal(cls, canal_id):
         try:
             mensajes = Mensaje.obtener_mensajes_por_canal(canal_id)

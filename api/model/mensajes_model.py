@@ -46,6 +46,32 @@ class Mensaje:
         return mensajes
 
     @classmethod
+    def obtener_mensajes_de_canal(cls, canal_id):
+        try:
+            query = """
+                SELECT m.id_mensaje, m.contenido, m.hora_mensaje, m.fecha_mensaje,
+                    m.id_usuario, u.alias as nombre_usuario
+                FROM mensajes m
+                INNER JOIN Usuarios u ON m.id_usuario = u.id_usuario
+                WHERE m.id_canal = %s
+                ORDER BY m.fecha_mensaje ASC, m.hora_mensaje ASC;
+            """
+            params = (canal_id,)
+            
+            results = DatabaseConnection.fetch_all(query, params)
+            
+            mensajes = []
+            for row in results:
+                mensaje = cls(*row)
+                mensajes.append(mensaje)
+            
+            return mensajes
+        except Exception as e:
+            print("Error en obtener_mensajes_de_canal:", e)
+            return []
+
+
+    @classmethod
     def crear_mensaje(cls, contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal):
         query = "INSERT INTO mensajes (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal) VALUES (%s, %s, %s, %s, %s);"
         params = (contenido, hora_mensaje, fecha_mensaje, id_usuario, id_canal)

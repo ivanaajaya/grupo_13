@@ -43,6 +43,7 @@ class Servidor:
                 INNER JOIN UsuarioServidor us ON s.id_servidor = us.id_servidor
                 WHERE us.id_usuario = %s;
             """
+            
             params = (id_usuario,)
             
             results = DatabaseConnection.fetch_all(query, params)
