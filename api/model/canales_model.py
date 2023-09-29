@@ -42,10 +42,10 @@ class Canal:
         return canales
 
     @classmethod
-    def crear_canal(cls, nombre_canal, id_servidor):
+    def crear_canal(cls, nombre_canal, servidor_id):
         try:
             query = "INSERT INTO canales (nombre_canal, id_servidor) VALUES (%s, %s);"
-            params = (nombre_canal, id_servidor)
+            params = (nombre_canal, servidor_id)
             result = DatabaseConnection.execute_query(query, params)
             if result:
                 return True
