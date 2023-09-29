@@ -46,6 +46,7 @@ class UserController:
         data = request.json
         alias = data.get('alias')
         correo_electronico = data.get('correo_electronico')
+        rutaassets= "../assets/"
 
         # Verificar si el alias ya está en uso
         if Usuario.is_alias_in_use(alias):
@@ -68,7 +69,7 @@ class UserController:
             password=data.get('password'),
             correo_electronico=correo_electronico,
             estado_activo= True,
-            imagen= None,
+            imagen= rutaassets+"jiji.png",
             
         )
 # id_rol=data.get('id_rol'),
